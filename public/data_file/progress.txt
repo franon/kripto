@@ -1,0 +1,13 @@
+RSA/ECB/NOPADDED
+1. Generate P,Q || none
+2. Calculate n dan modulus n || Done
+3. select e (public key) using gcd or something || Done
+4. calculate d (private key) || None
+5. Block-sizing || Done
+6. txt2num (ascii to dec) || None
+7. Encryption || None
+8. num2txt (dec to ascii)|| None
+9. Decryption || None
+
+Proses block : txt2num(base64_encode(128byte data))ke-1,txt2num(base64_encode(128byte data))ke-2
+proses unblock : 128byte data encrypted
