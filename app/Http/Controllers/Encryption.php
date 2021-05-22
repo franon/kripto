@@ -32,42 +32,36 @@ class Encryption extends Controller
 
     }
 
-    public function EncryptFile_AES($path,$key){
-        // $key = 'Thats my Kung Fu';
-        $iv = 'abcdefghj1234567';
-        list($file,$hash) = $this->fileHandler('open','pdf.pdf');
-        
+    public function EncryptFile_AES($message){
+        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+        $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
-        $cipher = $aes->CBC_Encrypt($file,$key,$iv);
-        
-        $this->fileHandler('write','pdf-encrypted-cbc.pdf',$cipher);
-
+        $cipher = $aes->CBC_Encrypt($message,$key,$iv);
+        return $cipher;
     }
 
-    public function DecryptFile_AES($path,$key){
-        $iv = 'abcdefghj1234567';
-        list($file,$hash) = $this->fileHandler('open','paper-1mb-encrypted-cbc.pdf');
-
+    public function DecryptFile_AES($cipher,$key){
+        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+        $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
-        $message = $aes->CBC_Decrypt($file,$key,$iv);
-        $this->fileHandler('write','paper-1mb-decrypted-cbc.pdf',$message);
-        
+        $message = $aes->CBC_Decrypt($cipher,$key,$iv);
+        return $message;
     }
 
     public function EncryptPlaintext_AES(){
-
+        echo "test";
     }
 
     public function DecryptPlaintext_AES(){
-
+        echo "Test";
     }
 
     public function Encrypt_RSA(){
-
+        echo "test";
     }
 
     public function Decrypt_RSA(){
-
+        echo "test";
     }
 
     public function fileHandler($type,$filename=false,$content=false){

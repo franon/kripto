@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\Drive\SimpleDrive;
+use App\Http\Controllers\Employee\EmployeeController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\enkripsirsa;
 use App\Http\Controllers\KriptoTemp1;
 use App\Http\Controllers\sha256;
 use App\Http\Controllers\Encryption;
 use App\Http\Controllers\UploadController;
-use Illuminate\Support\Facades\Route;
-
-use function PHPUnit\Framework\returnArgument;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,21 +24,25 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('coba', [KriptoTemp1::class,'openFile']);
-// Route::get('cobasplit', [KriptoTemp1::class,'openFileSplit']);
-// Route::get('sha', [sha256::class,'cetak']);
-// Route::get('hashfile', [sha256::class,'hashfile']);
-// Route::get('test', [sha256::class,'test']);
-// Route::get('test', [enkripsirsa::class,'encrypt']);
-// Route::get('testFile', [enkripsirsa::class,'hashfile']);
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('dashboard')->namespace('dashboard')->group(function(){
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('dashboard');
 
-Route::get('coba', [KriptoTemp1::class,'testing']);
-Route::get('enkrip', [Encryption::class, 'EncryptFile_AES']);
-Route::get('cobax', [Encryption::class, 'cobaenkrip']);
-Route::get('coba128', [Encryption::class, 'cobaenkrip']);
-Route::get('coba256', [Encryption::class, 'cobaenkrip_256']);
+        // Route::get('/admin', [,'']);
+        // Route::get('/employee', [,'']);
+    });
 
-Route::get('/upload', [UploadController::class, 'upload']);
-Route::post('/upload/process', [UploadController::class, 'upload_process']);
+    Route::prefix('employee')->namespace('employee')->group(function(){
+        Route::get('dashboard',[EmployeeController::class,'index']);
 
+        Route::get('upload', [UploadController::class, 'upload']);
+        Route::post('upload/process', [UploadController::class, 'upload_process']);
 
+        Route::get('drive', [SimpleDrive::class, 'showFiles']);
+    });
+
+});
+
+require __DIR__.'/auth.php';

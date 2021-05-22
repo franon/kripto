@@ -22,7 +22,7 @@
                 @endif
 
                 <form action="/upload/process" method="post" enctype="multipart/form-data">
-                    {{ csrf_field() }}
+                    @csrf
 
                     <div class="form-group">
                         <b>File</b>
