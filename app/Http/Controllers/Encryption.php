@@ -40,7 +40,7 @@ class Encryption extends Controller
         return $cipher;
     }
 
-    public function DecryptFile_AES($cipher,$key){
+    public function DecryptFile_AES($cipher){
         $key = 'kuncifran!@#$%10kuncifran!@#$%10';
         $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();

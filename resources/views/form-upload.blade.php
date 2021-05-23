@@ -10,6 +10,7 @@
 <body>
     <div class="row">
         <div class="container">
+
             <h2 class="text-center my-5">Upload File</h2>
 
             <div class="col-lg-8 mx-auto my-5">
@@ -37,6 +38,7 @@
                     <input type="submit" value="upload" class="btn btn-primary">
                 </form>
             </div>
+            
         </div>
     </div>
 </body>

@@ -25,17 +25,17 @@
       <div class="menu_section">
         <h3>Umum</h3>
         <ul class="nav side-menu">
-          <li><a><i class="fa fa-home"></i> Halaman Awal </a></li>
+          <li><a href=" {{ route('employee.dashboard') }} "><i class="fa fa-home"></i> Halaman Awal </a></li>
           <li><a><i class="fa fa-edit"></i> Penyimpanan File <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
-              <li><a href="form.html">Lihat File</a></li>
+              <li><a href="{{ route('employee.drive') }}">Lihat File</a></li>
               <li><a href="form_advanced.html">Upload File</a></li>
             </ul>
           </li>
           <li><a><i class="fa fa-desktop"></i> Pengolahan File <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
-              <li><a href="general_elements.html">Enkripsi File</a></li>
-              <li><a href="media_gallery.html">Dekripsi File</a></li>
+              <li><a href="{{ route('employee.file.encrypt') }}">Enkripsi File</a></li>
+              <li><a href="{{ route('employee.file.decrypt') }}">Dekripsi File</a></li>
               <li><a href="typography.html">Tanda Tangan File</a></li>
               <li><a href="icons.html">Verifikasi Tanda Tangan</a></li>
               <li><a href="glyphicons.html">Multi Pengamanan File</a></li>

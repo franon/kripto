@@ -37,7 +37,7 @@
 <!-- bootstrap-daterangepicker -->
 <script src="{{ asset('vendor/moment/min/moment.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ asset('vendor/dropzone/dist/min/dropzone.min.js') }}"></script>
 
 <!-- Custom Theme Scripts -->
 <script src="{{ asset('template/gentelella/build/js/custom.min.js') }}"></script>
-@stack('custom-js')

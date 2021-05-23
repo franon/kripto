@@ -6,9 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+	  <link rel="icon" href="images/favicon.ico" type="image/ico" />
     <title>@yield('title')</title>
     @include('includes.employee.head')
+    @stack('custom-css')
+
   </head>
 
   <body class="nav-md">
@@ -21,7 +23,7 @@
         <!-- page content -->
         <div class="right_col" role="main">
           
-            @include('includes.employee.content-default')
+            {{-- @include('includes.employee.content-default') --}}
 
             @yield('content')
 
@@ -41,5 +43,6 @@
     </div>
 
     @include('includes.employee.footer')
+    @stack('custom-js')
   </body>
 </html>

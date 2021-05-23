@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Drive\SimpleDrive;
+use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Encryption;

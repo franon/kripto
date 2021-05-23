@@ -415,7 +415,6 @@ class AES_Encryption
         $Nr = 14;
         $starttime = microtime(true);
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
-        echo 'plaintext 2 state: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         //! ROUND 
         $state = $this->addRoundKey($state,$word, $Nr);
 
