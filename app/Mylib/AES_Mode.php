@@ -41,7 +41,7 @@ class AES_Mode extends AES_Encryption
         $message = $this->pad($message);
         $n = strlen($message)/16;
         $cipher = "";
-        $word = $this->keyExpansion($this->convertTo('dec',$key));
+        $word = $this->keyExpansion($this->keyDec($key));
         
         for ($i=0; $i < $n; $i++) {
             $index = 16*$i;
@@ -54,13 +54,12 @@ class AES_Mode extends AES_Encryption
         // dd($cipher);
         return base64_encode($cipher);
     }
-
+    
     public function CBC_Decrypt($cipher, $key, $iv){
         $cipher = base64_decode($cipher);
         $n = strlen($cipher)/16;
         $message = "";
-        $word = $this->keyExpansion($this->convertTo('dec',$key));
-
+        $word = $this->keyExpansion($this->keyDec($key));
         for ($i=0; $i < $n; $i++) {
             $index = 16*$i;
             $cipherBlock = substr($cipher,$index,$index+16);

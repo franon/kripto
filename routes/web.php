@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Employee\DigitalSignature;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Employee\Drive\FileProcessing;
 use App\Http\Controllers\Employee\EmployeeController;
@@ -25,6 +26,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+route::get('coba256',[Encryption::class,'cobaenkrip_256']);
+route::get('cobarsa',[Encryption::class,'cobaenkrip_RSA']);
+
 Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->namespace('dashboard')->group(function(){
         Route::get('/dashboard', function () {
@@ -38,18 +42,21 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('employee')->name('employee.')->group(function(){
         Route::get('dashboard',[EmployeeController::class,'index'])->name('dashboard');
 
-        Route::get('upload', [UploadController::class, 'upload']);
-        Route::post('upload/process', [UploadController::class, 'upload_process']);
-
         Route::get('drive', [SimpleDrive::class, 'showFiles'])->name('drive');
         Route::get('drive/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
         Route::get('drive/remove/{filename}', [SimpleDrive::class, 'removeFiles'])->name('drive.file.remove');
 
-        Route::get('file/encrypt', [FileProcessing::class, 'show_FileEncryption'])->name('file.encrypt');
-        Route::post('file/encrypt/upload', [FileProcessing::class, 'process_FileEncryption'])->name('file.encrypt.upload');
-        Route::get('file/decrypt', [FileProcessing::class, 'show_FileDecryption'])->name('file.decrypt');
-        Route::post('file/decrypt/upload', [FileProcessing::class, 'process_FileDecryption'])->name('file.decrypt.upload');
-        Route::get('file/decrypt/download/{filename}', [FileProcessing::class, 'process_DownloadFileDecryption'])->name('file.decrypt.download');
+        Route::prefix('file')->name('file.')->group(function(){
+            Route::get('encrypt', [FileProcessing::class, 'show_FileEncryption'])->name('encrypt');
+            Route::post('encrypt/upload', [FileProcessing::class, 'process_FileEncryption'])->name('encrypt.upload');
+            Route::get('decrypt', [FileProcessing::class, 'show_FileDecryption'])->name('decrypt');
+            Route::post('decrypt/upload', [FileProcessing::class, 'process_FileDecryption'])->name('decrypt.upload');
+            Route::get('decrypt/download/{filename}', [FileProcessing::class, 'process_DownloadFileDecryption'])->name('decrypt.download');
+
+            Route::get('sign', [DigitalSignature::class, 'show_FormSign'])->name('sign');
+            Route::post('sign/process', [DigitalSignature::class, 'createSign'])->name('sign.upload');
+        });
+
     });
 
 });

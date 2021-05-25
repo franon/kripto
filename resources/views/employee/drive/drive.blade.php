@@ -47,13 +47,13 @@
                 <div class="row">
                     @foreach ($files as $file)
                     <div class="col-lg-3 col-xl-2">
-                        <div class="file-man-box"><a href="{{route('employee.drive.file.remove',[$file])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
-                            <div class="file-img-box"><img src="{{ asset('images/file_icons/'.pathinfo($file,PATHINFO_EXTENSION).'.svg') }}" alt="icon"></div>
-                            <a href="{{route('employee.file.decrypt.download',[$file])}}" class="file-download"><i class="fa fa-download"></i></a>
+                        <div class="file-man-box"><a href="{{route('employee.drive.file.remove',[$file['filename']])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
+                            <div class="file-img-box"><img src="{{ asset('images/file_icons/'.pathinfo($file['filename'],PATHINFO_EXTENSION).'.svg') }}" alt="icon"></div>
+                            <a href="{{route('employee.file.decrypt.download',[$file['filename']])}}" class="file-download"><i class="fa fa-download"></i></a>
                             {{-- <a href="{{route('employee.drive.file.download',[$file])}}" class="file-download"><i class="fa fa-download"></i></a> --}}
                             <div class="file-man-title">
-                                <h5 class="mb-0 text-overflow">{{$file}}</h5>
-                                <p class="mb-0"><small>568.8 kb</small></p>
+                                <h5 class="mb-0 text-overflow">{{$file['filename']}}</h5>
+                                <p class="mb-0"><small>{{$file['size']}} MB</small></p>
                             </div>
                         </div>
                     </div>    

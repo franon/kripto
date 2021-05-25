@@ -310,8 +310,7 @@ class AES_Encryption
         return $word;
     }
 
-    public function plaintext2State($plaintext){ 
-        $input = 'halosayasayahalo balobalobolabola';
+    public function plaintext2State($plaintext){
         $state = [];
         for ($i = 0; $i < 16; $i++) $state[$i % 4][floor($i / 4)] = $plaintext[$i];
         return $state;
@@ -325,10 +324,17 @@ class AES_Encryption
     }
 
     public function ordlist($char){
-        for ($i=0; $i < strlen($char); $i++) { 
-            $list[$i] = ord($char[$i]) & 0xff;
+        for ($i=0; $i < 16; $i++) {
+            $res[$i] = ord($char[$i]) & 0xff;
         }
-        return $list;
+        return $res;
+    }
+
+    public function keyDec($key){
+        for ($i=0; $i < 32; $i++) {
+            $res[$i] = ord($key[$i]) & 0xff;
+        }
+        return $res;
     }
 
     public function chrlist($num){
@@ -413,8 +419,10 @@ class AES_Encryption
 
     public function decrypt($cipher, $word){
         $Nr = 14;
-        $starttime = microtime(true);
+        // $starttime = microtime(true);
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
+        // echo json_encode($state).'<br/>';
+        // echo 'plaintext2state: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         //! ROUND 
         $state = $this->addRoundKey($state,$word, $Nr);
 

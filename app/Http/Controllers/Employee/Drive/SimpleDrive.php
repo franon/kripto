@@ -16,8 +16,12 @@ class SimpleDrive extends Controller
 
     public function showFiles(){
         $user = Auth::user();
-        $files = Storage::disk('frandrive')->files();
-        // dd($files);
+        foreach (Storage::disk('frandrive')->files() as $i => $file) {
+            $files[$i] = [
+                'filename'=>$file,
+                'size'=> round((Storage::disk('frandrive')->size($file))/1000000,2)
+            ];
+        };
         return view('employee.drive.drive',compact('user','files'));
     }
 
