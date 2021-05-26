@@ -34,7 +34,7 @@ class Encryption extends Controller
         $rsa_1024 = $rsa->encrypt();
     }
 
-    public function EncryptFile_AES($message){
+    public function encrypt_AES($message){
         $key = 'kuncifran!@#$%10kuncifran!@#$%10';
         $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
@@ -42,7 +42,7 @@ class Encryption extends Controller
         return $cipher;
     }
 
-    public function DecryptFile_AES($cipher){
+    public function decrypt_AES($cipher){
         $key = 'kuncifran!@#$%10kuncifran!@#$%10';
         $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
@@ -55,7 +55,9 @@ class Encryption extends Controller
     }
 
     public function DecryptPlaintext_AES(){
-        echo "Test";
+        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+        $iv = 'c0~JO&HN+~!!zMyh';
+        $aes = new AES_Mode();
     }
 
     public function createSignature($message){
@@ -63,24 +65,32 @@ class Encryption extends Controller
         $keys = $rsa_1024->newKeyGen('1024');
         // $message = hash('hash256','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec. Vitae tortor condimentum lacinia quis vel eros donec ac odio. Habitant morbi tristique senectus et.');
         $sign = $rsa_1024->encrypt($message,$keys['private']);
-        return [$sign,$keys['public']];
+        $keys = implode(".",$keys['public']);
+        $sign = base64_encode($sign.'.'.$keys);
+        return $sign;
     }
 
-    public function verifySignature($sign, $keys){
+    public function verifySignature($sign){
         $rsa_1024 = new RsaEncryption();
-        $md = $rsa_1024->decrypt($sign, $keys['public']);
+        $sign = \base64_decode($sign);
+        [$md, $pubkey, $modulus] = explode(".",$sign);
+        $keys = [$pubkey,$modulus];
+        $md = $rsa_1024->decrypt($md, $keys);
         return $md;
     }
 
-    public function Encrypt_RSA(RsaEncryption $rsa_1024){
+    public function Encrypt_RSA(){
+        $rsa_1024 = new RsaEncryption();
         $keys = $rsa_1024->keyGen('1024');
         $message = hash('hash256','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec. Vitae tortor condimentum lacinia quis vel eros donec ac odio. Habitant morbi tristique senectus et.');
 
         $encrypt = $rsa_1024->encrypt($message,$keys['public']);
     }
 
-    public function Decrypt_RSA(){
-        echo "test";
+    public function Decrypt_RSA($message,$keys){
+        $rsa_1024 = new RsaEncryption();
+        $message = $rsa_1024->decrypt($message,$keys);
+        return $message;
     }
 
     public function fileHandler($type,$filename=false,$content=false){

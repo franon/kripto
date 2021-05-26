@@ -3,42 +3,68 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Encryption;
 use App\Mylib\RsaEncryption;
 use Dotenv\Parser\Parser;
 use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use Smalot\PdfParser\Parser as PdfParserParser;
 use TCPDF;
 
-class DigitalSignature extends Controller
+class DigitalSignature extends SimpleDrive
 {
+    // protected $user = Auth::user();
     public function show_FormSign(){
         $user = Auth::user();
         return view('employee.file_processing.form-file-signing', compact('user'));
     }
+
+    public function show_FormVerify(){
+        $user = Auth::user();
+        return view('employee.file_processing.form-file-verifying', compact('user'));
+    }
+
     public function createSign(Request $request){
         $rsa = new Encryption();
         $this->validate($request, [
             'file'=>'required',
         ]);
+        //* 1. message_digest = sha256(M)
         $md = hash('sha256', $this->extractDocument('pdf', $request->file->path()));
-        [$digitalSign,$keys] = $rsa->createSignature($md);
-        // dd($keys);
-        // echo 'Time elapsed: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
-        $fileSignatured = $this->signDocument($request->file,$digitalSign,json_encode($keys));
-        return $fileSignatured;
+
+        //* 2. digital_signature = RSA-1024(message_digest)
+        $digitalSign = $rsa->createSignature($md); //? output digital_sign & pubkey
+
+        //* 3. Attachment Digital sign into PDF
+        $fileSignatured = $this->signDocument($request->file,$digitalSign);
+
+        //* 4. Upload File Signatured
+        $this->uploadFiles($md.'.pdf',$fileSignatured);
+        
+        return redirect()->route('employee.drive');
     }
 
-    public function verifySign($fileSignatured,$keys){
+    public function verifySign(Request $request){
         $rsa = new Encryption();
-        [$document,$digitalSign] = $this->separateDocumentandSign($fileSignatured);
-        $md = hash('sha256', $this->extractDocument('pdf','invoice.pdf'));
+        $this->validate($request, [
+            'file'=>'required',
+        ]);
 
-        $md_needVerify = $rsa->verifySignature($digitalSign,$keys);
+        //* 1. Separate signatures from documents
+        [$document,$digitalSign] = $this->separateDocumentandSign($request->file->path());
 
+        //* 2. M' = sha256(Document Digitalized)
+        $md = hash('sha256', $document);
+
+        //* 3. M'' = rsa_decrypt(digital_sign)
+        // dd($md,$digitalSign);
+        $md_needVerify = $rsa->verifySignature($digitalSign);
+
+        //* 4. M' == M'' ?
         if($md != $md_needVerify) return 'Fake Document!';
 
         return 'Verified Document!';
@@ -51,19 +77,16 @@ class DigitalSignature extends Controller
         switch ($fileType) {
             case 'pdf':
                 $pdf = $parser->parseFile($path);
-                $pages = $pdf->getPages();
-                foreach($pages as $page){
-                    $data .= $page->getText();
-                }
-                // echo $data; die;
-                return base64_encode($data);
+                $data = $pdf->getText();
+                $data = preg_replace('/[\s|\t]+/','',$data);
+                return $data;
             
             default:
                 return false;
         }
     }
 
-    public function signDocument($file, $digitalSign,$keys){
+    public function signDocument($file, $digitalSign){
         $user = Auth::user();
         $pdf = new Fpdi();
         $pageCount = $pdf->setSourceFile($file->path());
@@ -95,9 +118,44 @@ class DigitalSignature extends Controller
             'module_width' => 1, // width of a single module in points
             'module_height' => 1 // height of a single module in points
         ];
-        $payload = '[111011101110111][010010001000010][010011001110010][010010000010010][010011101110010]';
+        $payload = storage_path('public/'.'pdf.pdf');
         $pdf->write2DBarcode($payload, 'QRCODE,H', 20, 245, 30, 30, $style, 'N');
-        $pdf->Text(20, 213, 'Scan QR Untuk Validasi');
-        $pdf->Output($file->getClientOriginalName());
+        // $pdf->Text(20, 213, 'Scan QR Untuk Validasi');
+        $pdf->AddPage();
+        $html = <<<EOD
+        <p> $digitalSign </p>
+        EOD;
+        $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+        $file = $pdf->Output($file->getClientOriginalName(),'S');
+        return $file;
+    }
+
+    public function separateDocumentandSign($path){
+        $parser = new PdfParserParser();
+        $data = ''; $digitalSign = '';
+        $pdf = $parser->parseFile($path);   
+        $pages = $pdf->getPages();
+        $totalPage = count($pages)-1;
+        foreach ($pages as $idx => $page) {
+            if ($idx == $totalPage) {
+                $digitalSign = $page->getText();
+                break;
+            }
+            $data .= $page->getText();
+        }
+        $data = preg_replace('/[\s|\t]+/','',$data);
+        $digitalSign = preg_replace('/[\s|\t]+/','',$digitalSign);
+        return [$data,$digitalSign];
+    }
+
+    public function verifyDocument($param){
+        $aes = new Encryption();
+        $keys = $aes->decrypt_AES($param);
+
+        $rsa = new Encryption();
+        $filename = $rsa->Decrypt_RSA($message,$keys);
+        $filename = $filename.'pdf';
+
+        return $this->downloadFiles($filename);
     }
 }

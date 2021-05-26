@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('sign', [DigitalSignature::class, 'show_FormSign'])->name('sign');
             Route::post('sign/process', [DigitalSignature::class, 'createSign'])->name('sign.upload');
+            Route::get('verify', [DigitalSignature::class, 'show_FormVerify'])->name('verify');
+            Route::post('verify/process', [DigitalSignature::class, 'verifySign'])->name('verify.upload');
         });
 
     });

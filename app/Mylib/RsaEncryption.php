@@ -21,11 +21,11 @@ class RsaEncryption
 
     public function decrypt($cipher, $key){
         //! M = C^PK mod n
-        [$priv,$n] = $key;
+        [$exponent,$n] = $key;
         $input = explode(" ",base64_decode($cipher)); $output = '';
         foreach ($input as $block) {
             if($block){
-                $M = $this->num2txt(bcpowmod($block,$priv,$n));
+                $M = $this->num2txt(bcpowmod($block,$exponent,$n));
                 $output .= $M;
             }
         }

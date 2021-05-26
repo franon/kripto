@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class FileProcessing extends SimpleDrive
 {
     
-    public function show_FileEncryption()
-    {
+    public function show_FileEncryption(){
         $user = Auth::user();
         return view('employee.file_processing.form-file-encryption',compact('user'));
     }
@@ -26,8 +25,8 @@ class FileProcessing extends SimpleDrive
             ]);
 
         $file = $request->file;
-        $encrypted = $encryption->EncryptFile_AES($this->fileHandler('open',$file->path()));
-        $this->uploadFiles($file->getClientOriginalName(), $encrypted);
+        $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()));
+        $this->uploadFiles('frandrive',$file->getClientOriginalName(), $encrypted);
         return redirect()->route('employee.drive');
     }
 
@@ -54,7 +53,7 @@ class FileProcessing extends SimpleDrive
             'keterangan'=>'required'
             ]);
         $file = $request->file;
-        $message = $decryption->DecryptFile_AES($this->fileHandler('open',$file->path()));
+        $message = $decryption->decrypt_AES($this->fileHandler('open',$file->path()));
         // dd($message);
         return response()->make($message, 200, [
             'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
@@ -79,61 +78,5 @@ class FileProcessing extends SimpleDrive
             default:
                 return false;
         }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

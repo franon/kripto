@@ -37,7 +37,7 @@
               <li><a href="{{ route('employee.file.encrypt') }}">Enkripsi File</a></li>
               <li><a href="{{ route('employee.file.decrypt') }}">Dekripsi File</a></li>
               <li><a href="{{ route('employee.file.sign') }}">Tanda Tangan File</a></li>
-              <li><a href="icons.html">Verifikasi Tanda Tangan</a></li>
+              <li><a href="{{ route('employee.file.verify') }}">Verifikasi Tanda Tangan</a></li>
               <li><a href="glyphicons.html">Multi Pengamanan File</a></li>
             </ul>
           </li>
