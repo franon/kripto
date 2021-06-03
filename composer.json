@@ -13,7 +13,8 @@
         "laravel/tinker": "^2.5",
         "setasign/fpdi": "^2.3",
         "smalot/pdfparser": "^1.0",
-        "tecnickcom/tcpdf": "^6.4"
+        "tecnickcom/tcpdf": "^6.4",
+        "ext-gmp": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
