@@ -250,10 +250,13 @@ class AES_Encryption
 
     //* xor roundKey into State (S)
     public function addRoundKey($state, $word, $Nr){
-        for ($r=0; $r < 4; $r++) {
-            for ($c=0; $c < 4; $c++) {
-                $state[$r][$c] ^= $word[$Nr*4 + $c][$r];
-            }
+        // for ($r=0; $r < 4; $r++) {
+        //     for ($c=0; $c < 4; $c++) {
+        //         $state[$r][$c] ^= $word[$Nr*4 + $c][$r];
+        //     }
+        // }
+        for ($c=0; $c < 4; $c++) {
+            for ($r=0; $r < 4; $r++) $state[$r][$c] ^= $word[$Nr*4+$c][$r];
         }
         return $state;
     }
@@ -370,59 +373,36 @@ class AES_Encryption
 
     public function encrypt($message, $word){
         $Nr = 14;
-        // $starttime = microtime(true);
         $state = $this->plaintext2State($this->convertTo('dec',$message)); //* 2D array
-        // echo 'plaintext 2 state: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         //* Initial Round
-        // $starttime = microtime(true);
         $state = $this->addRoundKey($state, $word, 0);
-        // echo 'Addroundkey: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         //* Round 1-9
-        for ($i=1; $i < $Nr; $i++) { //? round 1-9
-            // $starttime = microtime(true);
+        for ($i=1; $i < $Nr; $i++) { //? rou
             $state = $this->subBytes($state);
-            // echo 'subbytes: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            // $starttime = microtime(true);
             $state = $this->shiftRows($state);
-            // echo 'shiftrows: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            // $starttime = microtime(true);
             $state = $this->mixColumn_Table($state);
-            // echo 'mixcolumn: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            // $starttime = microtime(true);
             $state = $this->addRoundKey($state, $word, $i);
-            // echo 'addroundkey['.$i.']: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         }
         //* Final Round 10
-        // $starttime = microtime(true);
         $state = $this->subBytes($state);
-        // echo 'subbytes['.$Nr.']: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-        // $starttime = microtime(true);
         $state = $this->shiftRows($state);
-        // echo 'shiftrows['.$i.']: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-        // $starttime = microtime(true);
         $state = $this->addRoundKey($state, $word, $Nr); //? round 10
-        // echo 'addroundkey['.$Nr.']: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-        // $starttime = microtime(true);
         $state = $this->state2Plaintext($this->convertTo('char',$state));
-        // echo 'state2plaintext['.$Nr.']: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         return $state; //* return 16Byte Cipherteks
     }
 
     public function decrypt($cipher, $word){
         $Nr = 14;
-        // $starttime = microtime(true);
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
-        // echo json_encode($state).'<br/>';
-        // echo 'plaintext2state: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         //! ROUND 
         $state = $this->addRoundKey($state,$word, $Nr);
 

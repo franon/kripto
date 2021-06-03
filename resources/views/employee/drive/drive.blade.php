@@ -45,12 +45,32 @@
                 </div>
 
                 <div class="row">
-                    @foreach ($files as $file)
+                  @isset($directory)
+                    @foreach ($directory as $dir)
+                    <div class="col-lg-3 col-xl-2">
+                      <div class="file-man-box">
+                          <div class="file-img-box">
+                            <a href="{{route('employee.drive.directory',['directory'=> base64_encode($dir)])}}"><img src="{{asset('images/file_icons/folder.svg')}}" alt="icon"></a></div>
+                          <div class="file-man-title">
+                            @if (is_array(explode('/',$dir)))
+                            @php $folderName = explode('/',$dir); $folderName = end($folderName); @endphp
+                              <h5 class="mb-0 text-overflow">Folder {{ $folderName }}</h5>
+                            @endif
+                              {{-- <h5 class="mb-0 text-overflow">Folder {{$dir}}</h5> --}}
+                          </div>
+                      </div>
+                    </div>
+                    @endforeach  
+                  @endisset
+                  
+                  @isset($files)
+                  @foreach ($files as $file)
+                  @php $penentu = explode('/',$file['path'])[0]; @endphp
                     <div class="col-lg-3 col-xl-2">
                         <div class="file-man-box"><a href="{{route('employee.drive.file.remove',[$file['filename']])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
                             <div class="file-img-box"><img src="{{ asset('images/file_icons/'.pathinfo($file['filename'],PATHINFO_EXTENSION).'.svg') }}" alt="icon"></div>
-                            <a href="{{route('employee.file.decrypt.download',[$file['filename']])}}" class="file-download"><i class="fa fa-download"></i></a>
-                            {{-- <a href="{{route('employee.drive.file.download',[$file])}}" class="file-download"><i class="fa fa-download"></i></a> --}}
+                            {{-- <a href="{{route('employee.file.decrypt.download',[$file['filename']])}}" class="file-download"><i class="fa fa-download"></i></a> --}}
+                            <a href="{{route('employee.drive.file.download',[$penentu,base64_encode($file['path'])])}}" class="file-download"><i class="fa fa-download"></i></a>
                             <div class="file-man-title">
                                 <h5 class="mb-0 text-overflow">{{$file['filename']}}</h5>
                                 <p class="mb-0"><small>{{$file['size']}} MB</small></p>
@@ -58,6 +78,8 @@
                         </div>
                     </div>    
                     @endforeach
+                  @endisset
+                  
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-xl-2">

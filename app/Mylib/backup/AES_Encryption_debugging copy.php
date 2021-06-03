@@ -250,67 +250,41 @@ class AES_Encryption_debugging
 
     //* xor roundKey into State (S)
     public function addRoundKey($state, $word, $Nr){
-        // for ($i=0; $i < 4; $i++) { 
-        //     for ($j=0; $j < 4; $j++) { 
-        //         echo dechex($state[$i][$j]).'   |   ';
-        //     }
-        //     echo '<br/>';
-        // }
-        
-        // for ($r=0; $r < 4; $r++) {
-        //     for ($c=0; $c < 4; $c++) {
-        //         echo $r.'|'.$c.'<br/>';
-        //         $state[$r][$c] ^= $word[$Nr*4 + $c][$r];
-        //     }
-        //     echo '<br/>';die;
-        // }
-
-        for ($c=0; $c < 4; $c++) {
-            for ($r=0; $r < 4; $r++) { 
-                $state[$r][$c] ^= $word[$Nr*4+$c][$r];
+        for ($r=0; $r < 4; $r++) {
+            for ($c=0; $c < 4; $c++) {
+                $state[$r][$c] ^= $word[$Nr*4 + $c][$r];
             }
         }
-        // dd($state);
-
-        // echo '===========================<br/>';
-        // for ($i=0; $i < 4; $i++) { 
-        //     for ($j=0; $j < 4; $j++) { 
-        //         echo dechex($word[$Nr*4 + $j][$i]).'   |   ';
-        //     }
-        //     echo '<br/>';
-        // }
-        // die;
         return $state;
     }
 
     public function keyExpansion($key){
         // dd(count($key));
-        //* take 4 word(16byte) key dan produce linear array of 44/60 words(176 byte/240byte)
+        //* take 4 word(16byte) key dan produce linear array of 44 words(176 byte)
         $Nk = 8; //* in words. 8/32/256. 
         $Nr = $Nk + 6; 
         $word= []; $temp = [];
+
         //! Step-1
         for ($i=0; $i < $Nk; $i++) {
-            $k = [$key[4*$i], $key[4*$i+1], $key[4*$i+2], $key[4*$i+3]]; //? [0,1,2,...,31];
-            $word[$i] = $k; //? [[0..3],[4..7],[8..11],[12..15],...,[28..31]];
+            $k = [$key[4*$i], $key[4*$i+1], $key[4*$i+2], $key[4*$i+3]]; //? [0,1,2,...,15];
+            $word[$i] = $k; //? [[0..3],[4..7],[8..11],[12..15]];
         }
-        // echo 'Step-1 KeyExp: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         //! Step-2
         for ($i=$Nk; $i < 4 * ($Nr+1) ; $i++) { //* i < Nb*(Nr+1)
             $temp = $word[$i-1];
-            //* jika kelipatan 8 lakukan function(g)
+            //* jika kelipatan 4 atau 8 lakukan function(g)
             if ($i % $Nk == 0) { //* i % 8 == 0
                 $temp = $this->subWord($this->rotWord($temp)); //* temp = subWord(rotWord(temp))
-                for ($t=0; $t < 4; $t++) $temp[$t] ^= self::$rCon[$i/$Nk][$t]; //* temp ⊕ rCon[i/8]
-                    // echo self::$rCon[$i/$Nk][$t].'|<>|'.\json_encode(self::$rCon[$i/$Nk]).'<br>';
+                for ($t=0; $t < 4; $t++) $temp[$t] ^= self::$rCon[$i/$Nk][$t]; //* temp ⊕ rCon[i/4]
             }
             elseif($Nk>6 && $i%$Nk == 4){
                 $temp = $this->subWord($temp);
             }
-            
+            //* jika bukan kelipatan 4
             for ($t=0; $t < 4; $t++) { 
-                $word[$i][$t] = $word[$i-$Nk][$t] ^ $temp[$t]; //* w[i] = w[i-$Nk] ⊕ temp || w[9][0..4] = w[5][0..4] ⊕ w[8][0..4]
+                $word[$i][$t] = $word[$i-4][$t] ^ $temp[$t]; //* w[i] = w[i-4] ⊕ temp || w[9][0..4] = w[5][0..4] ⊕ w[8][0..4]
             }
         }
         return $word;
@@ -336,31 +310,24 @@ class AES_Encryption_debugging
     }
 
     public function plaintext2State($plaintext){
+        $input = 'halosayasayahalo balobalobolabola';
         $state = [];
         for ($i = 0; $i < 16; $i++) $state[$i % 4][floor($i / 4)] = $plaintext[$i];
         return $state;
     }
 
     public function state2Plaintext($state){ 
+        $input = 'halosayasayahalo balobalobolabola';
         $res = [];
         for ($i = 0; $i < 16; $i++) $res[$i] = $state[$i % 4][floor($i / 4)];
-        
-        $res = implode($res);
         return $res;
     }
 
     public function ordlist($char){
-        for ($i=0; $i < 16; $i++) {
-            $res[$i] = ord($char[$i]) & 0xff;
+        for ($i=0; $i < \strlen($char); $i++) {
+            $list[$i] = ord($char[$i]) & 0xff;
         }
-        return $res;
-    }
-
-    public function keyDec($key){
-        for ($i=0; $i < 32; $i++) {
-            $res[$i] = ord($key[$i]) & 0xff;
-        }
-        return $res;
+        return $list;
     }
 
     public function chrlist($num){
@@ -369,7 +336,6 @@ class AES_Encryption_debugging
                 $list[$i][$j] = chr($num[$i][$j]);
             }
         }
-        // dd($list);
         return $list;
     }
 
@@ -404,72 +370,109 @@ class AES_Encryption_debugging
     }
 
     public function toHex($num){
-        for ($i=0; $i < 60; $i++) { 
-            for ($j=0; $j < 4; $j++) { 
-                $list[$i][$j] = dechex($num[$i][$j]);
-            }
-        }
-        return $list;
-}
+                for ($i=0; $i < 60; $i++) { 
+                    for ($j=0; $j < 4; $j++) { 
+                        $list[$i][$j] = dechex($num[$i][$j]);
+                    }
+                }
+                return $list;
+    }
 
-    public function encrypt($message, $word){
-        $Nr = 14;
+    public function encrypt($message, $key){
         $state = $this->plaintext2State($this->convertTo('dec',$message)); //* 2D array
-        // $this->php('Plaintext',$this->convertTo('hex',$state));
+        $this->debugState('Plaintext',$this->convertTo('hex',$state));
+        $key = $this->convertTo('dec',$key);
+        // dd($key);
+        $this->debugState('key', $key);
+        // $this->debugState('key',$this->convertTo('hex',$key));
+        // die;
+        $Nr = 14;
 
-        // dd($state,$word[0*4+0],$word[0*4+1],$word[0*4+2],$word[0*4+3]);
-
-        // \json_encode($this->php('Word',$this->toHex($word)));
-
+        //* Key Expansion
+        $expandedKey = $this->keyExpansion($key);
+        // \json_encode($this->debugState('EXPANDED Key',$this->toHex('not',$expandedKey)));
+        \json_encode($this->debugState('Word',$this->toHex($expandedKey)));
+        echo "#==============================================================================================================#<br>";
+        
+        echo "#================================================ROUND-KEY=======================================================#<br>";
         //* Initial Round
-        $state = $this->addRoundKey($state, $word, 0);
-        // $this->php('addRoundKey',$this->convertTo('hex',$state),0);
+        $state = $this->addRoundKey($state, $expandedKey, 0);
+        $this->debugState('S[ADDROUNDKEY_HEX]',$this->convertTo('hex',$state),0);
+        echo "#==============================================================================================================#<br>";
 
-        //* Round 1-13
-        for ($i=1; $i < $Nr; $i++) { //? rou
+        //* Round 1-9
+        for ($i=1; $i < $Nr; $i++) { //? round 1-9
             $state = $this->subBytes($state);
-            // $this->php('SubBytes',$this->convertTo('hex',$state),$i);
+            $this->debugState('S[SUB_BYTES_HEX]',$this->convertTo('hex',$state),$i);
 
             $state = $this->shiftRows($state);
-            // $this->php('ShiftRows',$this->convertTo('hex',$state),$i);
+            $this->debugState('S[SHIFT_ROWS_HEX]',$this->convertTo('hex',$state),$i);
 
             $state = $this->mixColumn_Table($state);
-            // $this->php('MixColumn',$this->convertTo('hex',$state),$i);
+            $this->debugState('S[MIX_COLUMN_HEX]',$this->convertTo('hex',$state),$i);
 
-            $state = $this->addRoundKey($state, $word, $i);
-            // $this->php('AddRoundKey',$this->convertTo('hex',$state),$i);
+            $state = $this->addRoundKey($state, $expandedKey, $i);
+            $this->debugState('S[ADDROUNDKEY_HEX]',$this->convertTo('hex',$state),$i);
+            echo "#==============================================================================================================#<br>";
         }
         //* Final Round 14
         $state = $this->subBytes($state);
-        // $this->php('SubBytes',$this->convertTo('hex',$state),$Nr);
+        $this->debugState('S[SUB_BYTES_HEX]',$this->convertTo('hex',$state),$Nr);
 
         $state = $this->shiftRows($state);
-        // $this->php('ShiftRows',$this->convertTo('hex',$state),$Nr);
+        $this->debugState('S[SHIFT_ROWS_HEX]',$this->convertTo('hex',$state),$Nr);
 
-        $state = $this->addRoundKey($state, $word, $Nr); //? round 10
-        // $this->php('AddRoundKey',$this->convertTo('hex',$state),$Nr);
-        
-        $state = $this->state2Plaintext($this->convertTo('char',$state));
+        $state = $this->addRoundKey($state, $expandedKey, $Nr); //? round 14
+        $this->debugState('S[ADDROUNDKEY_dec]',$state,$Nr);
+        $this->debugState('S[ADDROUNDKEY_HEX]',$this->convertTo('hex',$state),$Nr);
 
+        $state = implode($this->state2Plaintext($this->convertTo('char',$state)));
+        // dd($state);
         return $state; //* return 16Byte Cipherteks
     }
 
-    public function decrypt($cipher, $word){
-        $Nr = 14;
+    public function decrypt($cipher, $key){
+        echo "#==============================================================================================================#<br>";
+        echo "#===========================           ... DECRYPTING ...           ===========================================#<br>";
+        echo "#==============================================================================================================#<br>";
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
+        $this->debugState('Ciphertext',$this->convertTo('hex',$state));
+        
+        $key = $this->convertTo('dec', $key);
+        $this->debugState('Key',$key);
+
+        $Nr = 14; $expandedKey = [];
+        //* KEY EXPANSION
+        $expandedKey = $this->keyExpansion($key);
+
         //! ROUND 
-        $state = $this->addRoundKey($state,$word, $Nr);
+        $state = $this->addRoundKey($state,$expandedKey, $Nr);
+        $this->debugState('S[ADDROUNDKEY_INV]',$this->convertTo('hex',$state),$Nr);
 
         for ($i=$Nr-1; $i>0; $i--) { 
             $state = $this->shiftRows_INV($state);
+            $this->debugState('S[SHIFT_ROWS_INV]',$this->convertTo('hex',$state),$i);
+
             $state = $this->subBytes_INV($state);
-            $state = $this->addRoundKey($state,$word, $i);
+            $this->debugState('S[SUB_BYTES_INV]',$this->convertTo('hex',$state),$i);
+
+            $state = $this->addRoundKey($state,$expandedKey, $i);
+            $this->debugState('S[ADDROUNDKEY_INV]',$this->convertTo('hex',$state),$i);
+
             $state = $this->mixColumn_Table_INV($state);
+            $this->debugState('S[MIX_COLUMN_INV]',$this->convertTo('hex',$state),$i);
+            echo "#==============================================================================================================#<br>";
         }
         $state = $this->shiftRows_INV($state);
+        $this->debugState('S[SHIFT_ROWS_INV]',$this->convertTo('hex',$state),1);
+
         $state = $this->subBytes_INV($state);
-        $state = $this->addRoundKey($state,$word, 0);
-        $state = $this->state2Plaintext($this->convertTo('char',$state));
+        $this->debugState('S[SUB_BYTES_INV]',$this->convertTo('hex',$state),1);
+
+        $state = $this->addRoundKey($state,$expandedKey, 0);
+        $this->debugState('S[ADDROUNDKEY_INV]',$this->convertTo('hex',$state),0);
+        
+        $state = implode($this->state2Plaintext($this->convertTo('char',$state)));
 
         return $state;
 

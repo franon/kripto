@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Mylib\AES_Mode;
 use App\Mylib\RsaEncryption;
+use Exception;
 
 class Encryption extends Controller
 {
@@ -12,15 +13,16 @@ class Encryption extends Controller
         // echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         $message = 'shockdartpesan01';
         $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-        $iv = 'abcdefghj1234567';
+        // $key = [0x0f,0x15,0x71,0xc9,0x47,0xd9,0xe8,0x59,0x0c,0xb7,0xad,0xd6,0xaf,0x7f,0x67,0x98,0x0f,0x15,0x71,0xc9,0x47,0xd9,0xe8,0x59,0x0c,0xb7,0xad,0xd6,0xaf,0x7f,0x67,0x98];
+        $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
         // $cipher = $aes->Pure_Encrypt($message,$key); 
         // $message = $aes->Pure_Decrypt($cipher,$key);
         $message = $this->fileHandler('open','word.docx');
         $starttime = microtime(true);
-        $cipher = $aes->CBC_Encrypt($message,$key,$iv); 
-        $message = $aes->CBC_Decrypt($cipher,$key,$iv);
-        dd(\microtime(true)-$starttime);
+        $cipher = $aes->Pure_Encrypt($message,$key);
+        $message = $aes->Pure_Decrypt($cipher,$key);
+        dd(\microtime(true)-$starttime,$message);
         dd($cipher,$message);
 
         // $cipher = $aes->CBC_Encrypt($message, $key, $iv);
@@ -30,23 +32,32 @@ class Encryption extends Controller
     public function cobaenkrip_RSA(enkripsirsa $rsa){
         $message = 'shockdartpesan01';
         $key = 'kuncifran!@#$%10';
-        
         $rsa_1024 = $rsa->encrypt();
     }
 
     public function encrypt_AES($message){
+    
         $key = 'kuncifran!@#$%10kuncifran!@#$%10';
         $iv = 'c0~JO&HN+~!!zMyh';
+        // $message = 'shockdartpesan01';
         $aes = new AES_Mode();
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
+    
+        // dd($cipher);
         return $cipher;
     }
 
     public function decrypt_AES($cipher){
-        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-        $iv = 'c0~JO&HN+~!!zMyh';
-        $aes = new AES_Mode();
-        $message = $aes->CBC_Decrypt($cipher,$key,$iv);
+    $message = '';
+        try {
+            $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+            $iv = 'c0~JO&HN+~!!zMyh';
+            $aes = new AES_Mode();
+            $message = $aes->CBC_Decrypt($cipher,$key,$iv);
+        } catch (Exception $e) {
+            return abort(404);
+            echo $e->getMessage(); die;
+        }
         return $message;
     }
 

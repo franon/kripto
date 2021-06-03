@@ -26,6 +26,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('sha256', [sha256::class, 'test']);
+
 route::get('coba256',[Encryption::class,'cobaenkrip_256']);
 route::get('cobarsa',[Encryption::class,'cobaenkrip_RSA']);
 
@@ -42,8 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('employee')->name('employee.')->group(function(){
         Route::get('dashboard',[EmployeeController::class,'index'])->name('dashboard');
 
-        Route::get('drive', [SimpleDrive::class, 'showFiles'])->name('drive');
-        Route::get('drive/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
+        Route::get('drive', [SimpleDrive::class, 'showDirectory'])->name('drive');
+        Route::get('drive/{directory}', [SimpleDrive::class, 'showFiles'])->name('drive.directory');
+        Route::get('drive/download/{penentu}/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
         Route::get('drive/remove/{filename}', [SimpleDrive::class, 'removeFiles'])->name('drive.file.remove');
 
         Route::prefix('file')->name('file.')->group(function(){

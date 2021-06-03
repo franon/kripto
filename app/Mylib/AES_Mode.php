@@ -8,16 +8,16 @@ class AES_Mode extends AES_Encryption
         $message = $this->pad($message);
         $n = strlen($message)/16;
         $cipher = "";
+        $word = $this->keyExpansion($this->keyDec($key));
 
         for ($i=0; $i < $n; $i++) { 
             $index = 16*$i;
             $blockMessage = substr($message, $index,16);
             $starttime = microtime(true);
-            $temp = AES_Encryption::encrypt($blockMessage,$key);
+            $temp = AES_Encryption::encrypt($blockMessage,$word);
             echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
             $cipher .= $temp;
         }
-        // dd($cipher);
         return base64_encode($cipher);
     }
 
@@ -26,11 +26,12 @@ class AES_Mode extends AES_Encryption
         $cipher = base64_decode($cipher);
         $n = strlen($cipher)/16;
         $message = "";
+        $word = $this->keyExpansion($this->keyDec($key));
 
         for ($i=0; $i < $n; $i++) {
             $index = 16*$i;
             $blockCipher = substr($cipher, $index,16);
-            $temp = AES_Encryption::decrypt($blockCipher,$key);
+            $temp = AES_Encryption::decrypt($blockCipher,$word);
             $message .= $temp;
         }
         $message = $this->unpad($message);

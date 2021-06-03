@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Encryption;
-use App\Mylib\RsaEncryption;
+use App\Http\Controllers\Hashing;
 use Dotenv\Parser\Parser;
 use finfo;
 use Illuminate\Http\Request;
@@ -30,11 +30,14 @@ class DigitalSignature extends SimpleDrive
 
     public function createSign(Request $request){
         $rsa = new Encryption();
+        $hash = new Hashing();
         $this->validate($request, [
             'file'=>'required',
         ]);
         //* 1. message_digest = sha256(M)
-        $md = hash('sha256', $this->extractDocument('pdf', $request->file->path()));
+        // $md1 = hash('sha256', $this->extractDocument('pdf', $request->file->path()));
+        $md = $hash->hash('sha256',$this->extractDocument('pdf', $request->file->path()));
+
 
         //* 2. digital_signature = RSA-1024(message_digest)
         $digitalSign = $rsa->createSignature($md); //? output digital_sign & pubkey
@@ -43,13 +46,14 @@ class DigitalSignature extends SimpleDrive
         $fileSignatured = $this->signDocument($request->file,$digitalSign);
 
         //* 4. Upload File Signatured
-        $this->uploadFiles($md.'.pdf',$fileSignatured);
+        $this->uploadFiles($md.'.pdf',$fileSignatured,'signed');
         
         return redirect()->route('employee.drive');
     }
 
     public function verifySign(Request $request){
         $rsa = new Encryption();
+        $hash = new Hashing();
         $this->validate($request, [
             'file'=>'required',
         ]);
@@ -58,7 +62,8 @@ class DigitalSignature extends SimpleDrive
         [$document,$digitalSign] = $this->separateDocumentandSign($request->file->path());
 
         //* 2. M' = sha256(Document Digitalized)
-        $md = hash('sha256', $document);
+        // $md = hash('sha256', $document);
+        $md = $hash->hash('sha256',$document);
 
         //* 3. M'' = rsa_decrypt(digital_sign)
         // dd($md,$digitalSign);

@@ -18,7 +18,8 @@ class FileProcessing extends SimpleDrive
         return view('employee.file_processing.form-file-encryption',compact('user'));
     }
 
-    public function process_FileEncryption(Request $request, Encryption $encryption){
+    public function process_FileEncryption(Request $request){
+        $encryption = new Encryption();
         $this->validate($request, [
             'file'=>'required',
             'keterangan'=>'required'
@@ -26,7 +27,7 @@ class FileProcessing extends SimpleDrive
 
         $file = $request->file;
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()));
-        $this->uploadFiles('frandrive',$file->getClientOriginalName(), $encrypted);
+        $this->uploadFiles($file->getClientOriginalName(), $encrypted, 'encrypted');
         return redirect()->route('employee.drive');
     }
 
@@ -36,10 +37,11 @@ class FileProcessing extends SimpleDrive
         return view('employee.file_processing.form-file-decryption',compact('user'));
     }
 
-    public function process_DownloadFileDecryption($filename, Encryption $decryption){
+    public function process_DownloadFileDecryption($filename){
         // dd($file);
+        $decryption = new Encryption();
         $file = Storage::disk('frandrive')->get($filename);
-        $message = $decryption->DecryptFile_AES($file);
+        $message = $decryption->Decrypt_AES($file);
         
         return response()->make($message, 200, [
             'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
