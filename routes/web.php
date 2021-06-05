@@ -23,7 +23,8 @@ use App\Http\Controllers\UploadController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    phpinfo();
+    // return view('welcome');
 });
 
 Route::get('sha256', [sha256::class, 'test']);

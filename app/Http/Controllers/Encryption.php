@@ -49,15 +49,15 @@ class Encryption extends Controller
 
     public function decrypt_AES($cipher){
     $message = '';
-        try {
+        // try {
             $key = 'kuncifran!@#$%10kuncifran!@#$%10';
             $iv = 'c0~JO&HN+~!!zMyh';
             $aes = new AES_Mode();
             $message = $aes->CBC_Decrypt($cipher,$key,$iv);
-        } catch (Exception $e) {
-            return abort(404);
-            echo $e->getMessage(); die;
-        }
+        // } catch (Exception $e) {
+            // return abort(404);
+            // echo $e->getMessage(); die;
+        // }
         return $message;
     }
 

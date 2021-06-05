@@ -42,19 +42,21 @@ class AES_Encryption_debugging
     ];
 
     //* rCon digunakan untuk key Expansion [1st col is 2^(r-1) in GF(2^8)]
-    private static $rCon = [
-            [0x00, 0x00, 0x00, 0x00],
-            [0x01, 0x00, 0x00, 0x00],
-            [0x02, 0x00, 0x00, 0x00],
-            [0x04, 0x00, 0x00, 0x00],
-            [0x08, 0x00, 0x00, 0x00],
-            [0x10, 0x00, 0x00, 0x00],
-            [0x20, 0x00, 0x00, 0x00],
-            [0x40, 0x00, 0x00, 0x00],
-            [0x80, 0x00, 0x00, 0x00],
-            [0x1b, 0x00, 0x00, 0x00],
-            [0x36, 0x00, 0x00, 0x00]
-    ];
+    // private static $rCon = [
+    //         [0x00, 0x00, 0x00, 0x00],
+    //         [0x01, 0x00, 0x00, 0x00],
+    //         [0x02, 0x00, 0x00, 0x00],
+    //         [0x04, 0x00, 0x00, 0x00],
+    //         [0x08, 0x00, 0x00, 0x00],
+    //         [0x10, 0x00, 0x00, 0x00],
+    //         [0x20, 0x00, 0x00, 0x00],
+    //         [0x40, 0x00, 0x00, 0x00],
+    //         [0x80, 0x00, 0x00, 0x00],
+    //         [0x1b, 0x00, 0x00, 0x00],
+    //         [0x36, 0x00, 0x00, 0x00]
+    // ];
+
+    private static $rCon = [0x00,0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36];
 
     private static $Mul_2 = [
         0x00,0x02,0x04,0x06,0x08,0x0a,0x0c,0x0e,0x10,0x12,0x14,0x16,0x18,0x1a,0x1c,0x1e,
@@ -302,7 +304,8 @@ class AES_Encryption_debugging
             //* jika kelipatan 8 lakukan function(g)
             if ($i % $Nk == 0) { //* i % 8 == 0
                 $temp = $this->subWord($this->rotWord($temp)); //* temp = subWord(rotWord(temp))
-                for ($t=0; $t < 4; $t++) $temp[$t] ^= self::$rCon[$i/$Nk][$t]; //* temp ⊕ rCon[i/8]
+                $temp[0] ^= self::$rCon[$i/$Nk]; //* temp ⊕ rCon[i/8]
+                // for ($t=0; $t < 4; $t++) $temp[$t] ^= self::$rCon[$i/$Nk][$t];
                     // echo self::$rCon[$i/$Nk][$t].'|<>|'.\json_encode(self::$rCon[$i/$Nk]).'<br>';
             }
             elseif($Nk>6 && $i%$Nk == 4){
@@ -414,42 +417,67 @@ class AES_Encryption_debugging
 
     public function encrypt($message, $word){
         $Nr = 14;
+        // $starttime = \microtime(true);
         $state = $this->plaintext2State($this->convertTo('dec',$message)); //* 2D array
+        // var_dump($state);die;
         // $this->php('Plaintext',$this->convertTo('hex',$state));
+        // echo 'p2s: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         // dd($state,$word[0*4+0],$word[0*4+1],$word[0*4+2],$word[0*4+3]);
 
         // \json_encode($this->php('Word',$this->toHex($word)));
 
         //* Initial Round
-        $state = $this->addRoundKey($state, $word, 0);
+        // $starttime = \microtime(true);
+        $state = $this->addRoundKey($state, $word, 0); //! Assign
+        // $this->addRoundKey($state, $word, 0);
+        // echo 'addr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         // $this->php('addRoundKey',$this->convertTo('hex',$state),0);
 
         //* Round 1-13
         for ($i=1; $i < $Nr; $i++) { //? rou
-            $state = $this->subBytes($state);
+            // $starttime = \microtime(true);
+            $state = $this->subBytes($state); //! Assign
+            // echo $state;
+            
+            // $this->subBytes($state);
             // $this->php('SubBytes',$this->convertTo('hex',$state),$i);
+            // echo 'sb: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            $state = $this->shiftRows($state);
+            // $starttime = \microtime(true);
+            $state = $this->shiftRows($state); //! Assign
+            // $this->shiftRows($state);
             // $this->php('ShiftRows',$this->convertTo('hex',$state),$i);
+            // echo 'sr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            $state = $this->mixColumn_Table($state);
+            // $starttime = \microtime(true);
+            $state = $this->mixColumn_Table($state); //! Assign
+            // $this->mixColumn_Table($state);
             // $this->php('MixColumn',$this->convertTo('hex',$state),$i);
+            // echo 'mc: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
-            $state = $this->addRoundKey($state, $word, $i);
+            // $starttime = \microtime(true);
+            $state = $this->addRoundKey($state, $word, $i); //! Assign
+            // $this->addRoundKey($state, $word, $i);
             // $this->php('AddRoundKey',$this->convertTo('hex',$state),$i);
+            // echo 'addr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         }
         //* Final Round 14
-        $state = $this->subBytes($state);
+        $state = $this->subBytes($state); //! Assign
+        // $this->subBytes($state);
         // $this->php('SubBytes',$this->convertTo('hex',$state),$Nr);
 
-        $state = $this->shiftRows($state);
+        $state = $this->shiftRows($state); //! Assign
+        // $this->shiftRows($state);
         // $this->php('ShiftRows',$this->convertTo('hex',$state),$Nr);
 
-        $state = $this->addRoundKey($state, $word, $Nr); //? round 10
+        $state = $this->addRoundKey($state, $word, $Nr); //? round 14 //! Assign
+        // $this->addRoundKey($state, $word, $Nr);
         // $this->php('AddRoundKey',$this->convertTo('hex',$state),$Nr);
         
+        // $starttime = \microtime(true);
         $state = $this->state2Plaintext($this->convertTo('char',$state));
+        // echo 's2p: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         return $state; //* return 16Byte Cipherteks
     }

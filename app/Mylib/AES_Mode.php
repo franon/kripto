@@ -47,12 +47,13 @@ class AES_Mode extends AES_Encryption
         for ($i=0; $i < $n; $i++) {
             $index = 16*$i;
             $temp = $this->strxor(substr($message,$index,$index+16),$iv);
-            $starttime = microtime(true);
+            // $starttime = \microtime(true);
             $iv = AES_Encryption::encrypt($temp, $word);
             // echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
             $cipher .= $iv;
         }
         // dd($cipher);
+        // die;
         return base64_encode($cipher);
     }
     

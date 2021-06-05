@@ -19,6 +19,7 @@ class FileProcessing extends SimpleDrive
     }
 
     public function process_FileEncryption(Request $request){
+        $starttime = microtime(true);
         $encryption = new Encryption();
         $this->validate($request, [
             'file'=>'required',
@@ -27,6 +28,8 @@ class FileProcessing extends SimpleDrive
 
         $file = $request->file;
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()));
+        
+        dd(\microtime(true)-$starttime);
         $this->uploadFiles($file->getClientOriginalName(), $encrypted, 'encrypted');
         return redirect()->route('employee.drive');
     }
