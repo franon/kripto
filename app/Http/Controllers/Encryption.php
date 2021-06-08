@@ -41,14 +41,15 @@ class Encryption extends Controller
         $iv = 'c0~JO&HN+~!!zMyh';
         // $message = 'shockdartpesan01';
         $aes = new AES_Mode();
+        // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
-    
+        // dd(microtime(true)-$starttime);
         // dd($cipher);
         return $cipher;
     }
 
     public function decrypt_AES($cipher){
-    $message = '';
+        $message = '';
         // try {
             $key = 'kuncifran!@#$%10kuncifran!@#$%10';
             $iv = 'c0~JO&HN+~!!zMyh';
@@ -59,16 +60,6 @@ class Encryption extends Controller
             // echo $e->getMessage(); die;
         // }
         return $message;
-    }
-
-    public function EncryptPlaintext_AES(){
-        echo "test";
-    }
-
-    public function DecryptPlaintext_AES(){
-        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-        $iv = 'c0~JO&HN+~!!zMyh';
-        $aes = new AES_Mode();
     }
 
     public function createSignature($message){

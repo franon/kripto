@@ -17,19 +17,22 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'u_id',
-        'u_username',
-        'u_fullname',
+        'p_id',
+        'p_namapengguna',
+        'p_namalengkap',
         'email',
         'email_verified_at',
         'password',
-        'role_id',
+        'peran_id',
         'is_active',
-        'phone_number',
-        'gender',
+        'no_hp',
+        'jen_kel',
         'remember_token',
     ];
-    protected $primaryKey = 'u_id';
+
+    // protected $table = 'my_flights';
+    protected $table = 'pengguna';
+    protected $primaryKey = 'p_id';
     public $incrementing = false;
     protected $keyType  = 'string';
     /**
@@ -50,4 +53,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function direktori(){
+        return $this->hasMany(Direktori::class);
+    }
+
+    public function file(){
+        return $this->hasMany(FileProcessing::class);
+    }
 }

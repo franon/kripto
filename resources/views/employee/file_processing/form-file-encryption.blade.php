@@ -46,8 +46,8 @@
                     </div>
 
                     <div class="form-group">
-                        <b>Keterangan</b>
-                        <textarea name="keterangan" class="form-control" cols="30" rows="2"></textarea>
+                        <b>Kunci</b>
+                        <textarea name="key" class="form-control" cols="15" rows="2"></textarea>
                     </div>
 
                     <input type="submit" value="upload" class="btn btn-primary">

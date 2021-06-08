@@ -32,6 +32,8 @@ Route::get('sha256', [sha256::class, 'test']);
 route::get('coba256',[Encryption::class,'cobaenkrip_256']);
 route::get('cobarsa',[Encryption::class,'cobaenkrip_RSA']);
 
+Route::get('ver/{penentu}/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('public.download');
+
 Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->namespace('dashboard')->group(function(){
         Route::get('/dashboard', function () {

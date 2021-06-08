@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Encryption;
 use App\Http\Controllers\Hashing;
+use App\Models\Direktori;
 use Dotenv\Parser\Parser;
 use finfo;
 use Illuminate\Http\Request;
@@ -27,26 +28,43 @@ class DigitalSignature extends SimpleDrive
         $user = Auth::user();
         return view('employee.file_processing.form-file-verifying', compact('user'));
     }
-
+    
     public function createSign(Request $request){
         $rsa = new Encryption();
         $hash = new Hashing();
         $this->validate($request, [
             'file'=>'required',
         ]);
+        $file = $request->file;
+        $defaultDirectory = 'signed/';
+
         //* 1. message_digest = sha256(M)
         // $md1 = hash('sha256', $this->extractDocument('pdf', $request->file->path()));
-        $md = $hash->hash('sha256',$this->extractDocument('pdf', $request->file->path()));
-
+        $md = $hash->hash('sha256',$this->extractDocument('pdf', $file->path()));
 
         //* 2. digital_signature = RSA-1024(message_digest)
         $digitalSign = $rsa->createSignature($md); //? output digital_sign & pubkey
 
         //* 3. Attachment Digital sign into PDF
-        $fileSignatured = $this->signDocument($request->file,$digitalSign);
+        $filename = $md.'.pdf'; $path = $defaultDirectory.$filename;
+        $fileSignatured = $this->signDocument($file,$digitalSign,$path);
 
         //* 4. Upload File Signatured
-        $this->uploadFiles($md.'.pdf',$fileSignatured,'signed');
+        $this->uploadFiles($path,$fileSignatured);
+        $directory = Direktori::find('dir-02');
+        $directory->file()->create([
+            'file_id'=>'file-'.sha1(md5(microtime(true))),
+            'file_nama'=>$filename,
+            'file_alias'=>$file->getClientOriginalName(),
+            'file_tipe'=>$file->getClientOriginalExtension(),
+            'file_jalur'=>$directory->dir_jalur,
+            'file_jalurutuh'=>$path,
+            'file_ukuran'=>$file->getSize(),
+            'p_id'=>Auth::user()->p_id,
+            'pembuat'=>Auth::user()->p_namapengguna,
+            'tanggal_buat'=>date('Y-m-d'),
+            'dir_nama'=>$directory->dir_nama
+        ]);
         
         return redirect()->route('employee.drive');
     }
@@ -91,9 +109,10 @@ class DigitalSignature extends SimpleDrive
         }
     }
 
-    public function signDocument($file, $digitalSign){
+    public function signDocument($file, $digitalSign,$path){
         $user = Auth::user();
         $pdf = new Fpdi();
+        $filename = base64_encode($path);
         $pageCount = $pdf->setSourceFile($file->path());
 
         $pdf->SetCreator(PDF_CREATOR);
@@ -123,7 +142,8 @@ class DigitalSignature extends SimpleDrive
             'module_width' => 1, // width of a single module in points
             'module_height' => 1 // height of a single module in points
         ];
-        $payload = storage_path('public/'.'pdf.pdf');
+        $payload = route('public.download',['penentu'=>'signed','filename'=>$filename]);
+        // dd($payload);
         $pdf->write2DBarcode($payload, 'QRCODE,H', 20, 245, 30, 30, $style, 'N');
         // $pdf->Text(20, 213, 'Scan QR Untuk Validasi');
         $pdf->AddPage();
@@ -151,16 +171,5 @@ class DigitalSignature extends SimpleDrive
         $data = preg_replace('/[\s|\t]+/','',$data);
         $digitalSign = preg_replace('/[\s|\t]+/','',$digitalSign);
         return [$data,$digitalSign];
-    }
-
-    public function verifyDocument($param){
-        $aes = new Encryption();
-        $keys = $aes->decrypt_AES($param);
-
-        $rsa = new Encryption();
-        $filename = $rsa->Decrypt_RSA($message,$keys);
-        $filename = $filename.'pdf';
-
-        return $this->downloadFiles($filename);
     }
 }

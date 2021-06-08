@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pengguna;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -34,15 +35,15 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'p_namapengguna' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pengguna',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        // dd('wow');
         $user = User::create([
-            'u_id' => sha1(md5(microtime(true))),
-            'u_username' => $request->username, 
-            // 'u_fullname' => $request->name,
+            'p_id' => sha1(md5(microtime(true))),
+            'p_namapengguna' => $request->p_namapengguna, 
+            'p_namalengkap' => $request->p_namapengguna,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -50,7 +51,8 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+        
+        return \redirect('/employee/dashboard');
+        // return redirect(RouteServiceProvider::HOME);
     }
 }
