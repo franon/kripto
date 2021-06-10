@@ -5,6 +5,7 @@ use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Employee\Drive\FileProcessing;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\employee\internal\DaftarPaket;
+use App\Http\Controllers\employee\internal\Direktori;
 use App\Http\Controllers\employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\enkripsirsa;
@@ -25,8 +26,9 @@ use App\Http\Controllers\UploadController;
 */
 
 Route::get('/', function () {
-    phpinfo();
-    // return view('welcome');
+    // phpinfo();
+    // return redirect()->route('login');
+    return view('welcome');
 });
 
 Route::get('sha256', [sha256::class, 'test']);
@@ -81,6 +83,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('paket/internet',[DaftarPaket::class, 'showPaketInternet'])->name('paket_internet');
             Route::get('paket/internet/tambah',[DaftarPaket::class, 'showCreatePaketInternet'])->name('paket_internet.tambah');
             Route::post('paket/internet/tambah/proses',[DaftarPaket::class, 'createPaketInternet'])->name('paket_internet.tambah.proses');
+
+            Route::get('direktori',[Direktori::class, 'showDirektori'])->name('direktori');
+            Route::get('direktori/tambah',[Direktori::class, 'showCreateDirektori'])->name('direktori.tambah');
+            Route::post('direktori/tambah/proses',[Direktori::class, 'createDirektori'])->name('direktori.tambah.proses');
         });
 
     });

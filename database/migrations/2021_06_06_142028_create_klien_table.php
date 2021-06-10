@@ -24,7 +24,7 @@ class CreateKlienTable extends Migration
             $table->string('no_hp')->nullable();
             $table->date('mulai_berlangganan');
             $table->string('no_kontrak')->nullable();
-            $table->primary('k_id');
+            // $table->primary('k_id');
         });
     }
 

@@ -23,7 +23,9 @@ class CreateTagihanKlienTable extends Migration
             $table->string('status_bayar',10);
             // $table->string('pinet_id');
             $table->integer('k_id')->unsigned();
-            $table->index(['pinet_id','k_id']);
+            $table->string('pk_no');
+            // $table->index(['pinet_id','k_id']);
+            $table->index(['k_id']);
             // $table->foreign('pinet_id')->references('pinet_id')->on('paket_internet')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('k_id')->references('k_id')->on('klien')->onUpdate('cascade')->onDelete('cascade');
         });

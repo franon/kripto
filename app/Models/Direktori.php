@@ -14,6 +14,7 @@ class Direktori extends Model
     public $incrementing = false;
     protected $keyType  = 'string';
     protected $guarded = [];
+    public $timestamps = false;
 
     // protected $fillable= [
     //     'dir_id',

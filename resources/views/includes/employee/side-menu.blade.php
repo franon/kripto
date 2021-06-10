@@ -56,6 +56,7 @@
           <li><a><i class="fa fa-user-secret" aria-hidden="true"></i> Internal <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.internal.paket_internet') }}">Daftar Paket</a></li>
+              <li><a href="{{ route('employee.internal.direktori') }}">Daftar Folder</a></li>
             </ul>
           </li>
         </ul>

@@ -55,6 +55,7 @@ class DaftarKlien extends Controller
         $klien = Klien::find($lastID);
         $klien->paket_internet()->attach($daftarPaketInternet->pinet_id,[
             'pk_id'=>'pk-'.sha1(md5(microtime(true))),
+            'pk_no'=>'pk-gmdp-'.$lastID,
             'pk_harga'=> $daftarPaketInternet->pinet_harga
         ]);
 
