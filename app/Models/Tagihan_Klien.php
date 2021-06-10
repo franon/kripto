@@ -12,4 +12,5 @@ class Tagihan_Klien extends Model
     protected $table = 'tagihan_klien';
     protected $primaryKey = 'tagihan_id';
     protected $guarded = [];
+    public $timestamps = false;
 }

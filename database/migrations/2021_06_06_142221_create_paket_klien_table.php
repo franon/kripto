@@ -15,7 +15,8 @@ class CreatePaketKlienTable extends Migration
     {
         Schema::create('paket_klien', function (Blueprint $table) {
             $table->string('pk_id');
-            $table->string('pk_harga');
+            $table->string('pk_no');
+            $table->integer('pk_harga');
             // $table->string('k_id');
             $table->integer('k_id')->unsigned();
             $table->string('pinet_id');

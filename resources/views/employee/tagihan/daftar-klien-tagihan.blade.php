@@ -15,6 +15,10 @@
 
       <div class="x_content">
 
+        @if ($errors->all())
+        {{-- @dd($errors) --}}
+        <div class="alert alert-danger" style="width: 50%"><h4>{{$errors->first()}}</h4></div>
+        @endif
         <div class="table-responsive">
           <table class="table table-striped jambo_table bulk_action">
             <thead>
@@ -24,7 +28,7 @@
                 </th>
                 <th class="column-title">Nama Klien </th>
                 <th class="column-title">Paket terdaftar </th>
-                <th class="column-title">Akumulasi Tagihan </th>
+                <th class="column-title">Estimasi Tagihan </th>
                 <th class="column-title">Mulai Berlangganan </th>
                 <th class="column-title">Cetak Invoice </th>
                 <th class="column-title no-link last"><span class="nobr">Action</span>
@@ -50,7 +54,7 @@
                         <br>
                         @endforeach
                     </td>
-                    <td class=" ">{{'Rp. '.number_format($tagihan,0,'.','.')}} <i class="success fa fa-long-arrow-up"></i></td>
+                    <td class=" ">{{'Rp. '.number_format($tagihan,0,'.','.')}}</td>
                     <td class=" ">{{$k['mulai_berlangganan']}}</td>
                     <td class=" "> <a href="{{ route('employee.daftar.klien.tagihan.cetak', ['klien_id'=>$k['k_id']]) }}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> {{'Cetak PDF'}}</a></td>
                     <td class=" last"><a href="#">Detail</a>

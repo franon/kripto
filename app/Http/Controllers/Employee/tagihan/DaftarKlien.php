@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Employee\DigitalSignature;
 use App\Models\Klien;
 use App\Models\Paket_Internet;
+use App\Models\Tagihan_Klien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use TCPDF;
 use App\Mylib\customPDF;
+use Hamcrest\Type\IsObject;
 use stdClass;
 
 class DaftarKlien extends Controller
@@ -82,39 +84,57 @@ class DaftarKlien extends Controller
     }
 
     public function cetakPDFKlienTagihan($klien_id){
-        $digitalsigning = new DigitalSignature();
-        $user = Auth::user();
-        $klien = Klien::find($klien_id);
-        $result = $klien->first()->toArray();$result['tagihan'] = 0;
-        $result['tagihan_no'] = $result['no_kontrak'].'/'.date("ym");
+      $digitalsigning = new DigitalSignature();
+      $user = Auth::user();
+      $klien = Klien::find($klien_id);
+      $result = $klien->toArray();$result['tagihan'] = 0;
+      $result['tagihan_no'] = $result['no_kontrak'].'/'.date("ym");
+      if(Tagihan_Klien::where('tagihan_no',$result['tagihan_no'])->exists()) return redirect()->back()->withErrors('Invoice klien ['.$result["k_namalengkap"].'] sudah ada');
+
         foreach ($klien->paket_internet as $idx => $paket) {
-            $result['paket'][$idx] = $paket->toArray();
-            $result['tagihan'] += $paket['pinet_harga'];
+              $result['paket'][$idx]['pinet_id'] = $paket->pinet_id;
+              $result['paket'][$idx]['pinet_tipe'] = $paket->pinet_tipe;
+              $result['paket'][$idx]['pinet_harga'] = $paket->pinet_harga;
+              $result['paket'][$idx]['pk_no'] = $paket->pivot->pk_no;
+              $result['paket'][$idx]['pk_harga'] = $paket->pivot->pk_harga;
+              $result['tagihan'] += $paket->pivot->pk_harga;
         }
-        $result['ppn'] = ($result['tagihan']*10/100);
-        $result['totalTagihan'] = $result['tagihan']+$result['ppn'];
+      $result['ppn'] = ($result['tagihan']*10/100);
+      $result['totalTagihan'] = $result['tagihan']+$result['ppn'];
+      // return $result;
 
-        // return $result;
-
-        [$filename,$path] = $this->coreCetakPDFbyTCPDF($user,$result);
+      [$filename,$path] = $this->coreCetakPDFbyTCPDF($user,$result);
         $file = new class($filename,$path){
-          private $path;
-          private $filename;
-          
-          public function __construct($filename, $path) {
-            $this->path = $path;
-            $this->filename = $filename;
-          }
+            private $path;
+            private $filename;
+            
+            public function __construct($filename, $path) {
+              $this->path = $path;
+              $this->filename = $filename;
+            }
 
-          public function path(){
-            return $this->path;
-          }
+            public function path(){
+              return $this->path;
+            }
 
-          public function getClientOriginalName(){
-            return $this->filename;
-          }
+            public function getClientOriginalName(){
+              return $this->filename;
+            }
         };
-        $digitalsigning->internalCreateSign($file);
+
+      $digitalsigning->internalCreateSign($file);
+
+      Tagihan_Klien::create([
+        'tagihan_no'=>$result['tagihan_no'],
+        'tagihan_periode'=>date("ym"),
+        'tagihan_ppn'=>$result['ppn'],
+        'tagihan_total'=>$result['totalTagihan'],
+        'status_bayar'=>0,
+        'pk_no'=>$result['paket'][0]['pk_no'],
+        'k_id'=>$result['k_id'],
+      ]);
+
+      return redirect()->route('employee.daftar.klien.tagihan');
 
 
 
@@ -159,7 +179,7 @@ class DaftarKlien extends Controller
                     <th bgcolor="#DAD9D7" align="center"> Kode Pelanggan / Customer ID</th>
                   </tr>
                   <tr>
-                    <td align="center">001</td>
+                    <td align="center">'.$result['k_id'].'</td>
                   </tr>
                 </table>
                 <p></p>
@@ -178,14 +198,14 @@ class DaftarKlien extends Controller
                     <td align="center">'.date("d F Y").'</td>
                     <td align="center">'.date('j F Y',strtotime('2021-06-10')).'</td>
                     <td align="center">'.$result['no_kontrak'].'</td>
-                    <td align="center">Total Tagihan / Total Amount </td>
+                    <td align="center">'.$result['totalTagihan'].' </td>
                     <td align="center"> -  </td>
                   </tr>
                 </table>
                 
                 <p style="margin: 0; padding: 0; margin-top: 20px;">Kepada / To.</p>
-                <p style="margin: 0; padding: 0;">Abdul Wahid</p>
-                <p style="margin-bottom: 20px;">Bumi Sakinah 4 Blok C</p>
+                <p style="margin: 0; padding: 0;">'.$result['k_namalengkap'].'</p>
+                <p style="margin-bottom: 20px;">'.$result['k_alamat'].'</p>
                 
 
                 <table border="1" cellspacing="3" cellpadding="4" style="width: 100%">
@@ -201,9 +221,9 @@ class DaftarKlien extends Controller
         $html .= '
                 <tr>
                       <td height="50" align="center">'.$paket['pinet_tipe'].'</td>
-                      <td height="50" align="center">juni 2021</td>
+                      <td height="50" align="center">'.date('F Y').'</td>
                       <td height="50" align="center">1 bulan</td>
-                      <td height="50" align="center">'.$paket['pinet_harga'].'</td>
+                      <td height="50" align="right">'.$paket['pk_harga'].'</td>
                 </tr>
               ';
       }
@@ -212,19 +232,19 @@ class DaftarKlien extends Controller
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td>Sub Total</td>
-                    <td>'.$result["tagihan"].'</td>
+                    <td align="right">'.$result["tagihan"].'</td>
                   </tr>
                   <tr>
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td>PPN 10%</td>
-                    <td>'.$result["ppn"].'</td>
+                    <td align="right">'.$result["ppn"].'</td>
                   </tr>
                   <tr>
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td style=" border-style: hidden; border-left-style: hidden; border-bottom-style: hidden;"></td>
                     <td><strong>Total Tagihan</strong></td>
-                    <td><strong>'.$result["totalTagihan"].'</strong></td>
+                    <td align="right"><strong>'.$result["totalTagihan"].'</strong></td>
                   </tr>
                 </table>
 

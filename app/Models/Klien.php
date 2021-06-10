@@ -17,6 +17,6 @@ class Klien extends Model
     public $timestamps = false;
 
     public function paket_internet(){
-        return $this->belongsToMany(Paket_Internet::class,'paket_klien','k_id','pinet_id');
+        return $this->belongsToMany(Paket_Internet::class,'paket_klien','k_id','pinet_id')->withPivot('pk_no','pk_harga');
     }
 }
