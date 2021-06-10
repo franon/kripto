@@ -69,7 +69,7 @@ class DigitalSignature extends SimpleDrive
         return redirect()->route('employee.drive');
     }
 
-    public function internalCreateSign($file){
+    public function internalCreateSign($file,$tagihan){
         $rsa = new Encryption();
         $hash = new Hashing();
         $defaultDirectory = 'signed/';
@@ -99,7 +99,8 @@ class DigitalSignature extends SimpleDrive
             'p_id'=>Auth::user()->p_id,
             'pembuat'=>Auth::user()->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d'),
-            'dir_nama'=>$directory->dir_nama
+            'dir_nama'=>$directory->dir_nama,
+            'tagihan_id'=> $tagihan->tagihan_id
         ]);
         
         return redirect()->route('employee.drive');

@@ -1,7 +1,8 @@
 <div class="col-md-3 left_col">
   <div class="left_col scroll-view">
     <div class="navbar nav_title" style="border: 0;">
-      <a href="{{ route('employee.dashboard') }}" class="site_title"><i class="fa fa-paw"></i> <span>Sistem Kripto!</span></a>
+      {{-- <a href="{{ route('employee.dashboard') }}" class="site_title"><i class="fa fa-paw"></i> <span>GMDP</span></a> --}}
+      <a href="{{ route('employee.dashboard') }}" class="site_title"><img src="{{asset('images/gmdp_logo.png')}}" alt="" width="30" height="30"> <span>GMDP</span></a>
     </div>
 
     <div class="clearfix"></div>
@@ -50,6 +51,11 @@
           <li><a><i class="fa fa-key"></i> Pengolahan Kunci <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="tables.html">Atur kunci saya</a></li>
+            </ul>
+          </li>
+          <li><a><i class="fa fa-user-secret" aria-hidden="true"></i> Internal <span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+              <li><a href="{{ route('employee.internal.paket_internet') }}">Daftar Paket</a></li>
             </ul>
           </li>
         </ul>

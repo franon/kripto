@@ -3,5 +3,5 @@
 @section('title','Dashboard Employee')
 
 @section('content')
-Tess
+
 @endsection

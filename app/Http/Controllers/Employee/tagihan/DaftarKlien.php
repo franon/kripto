@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use TCPDF;
 use App\Mylib\customPDF;
 use Hamcrest\Type\IsObject;
+use Illuminate\Support\Facades\Storage;
 use stdClass;
 
 class DaftarKlien extends Controller
@@ -91,40 +92,39 @@ class DaftarKlien extends Controller
       $result['tagihan_no'] = $result['no_kontrak'].'/'.date("ym");
       if(Tagihan_Klien::where('tagihan_no',$result['tagihan_no'])->exists()) return redirect()->back()->withErrors('Invoice klien ['.$result["k_namalengkap"].'] sudah ada');
 
-        foreach ($klien->paket_internet as $idx => $paket) {
-              $result['paket'][$idx]['pinet_id'] = $paket->pinet_id;
-              $result['paket'][$idx]['pinet_tipe'] = $paket->pinet_tipe;
-              $result['paket'][$idx]['pinet_harga'] = $paket->pinet_harga;
-              $result['paket'][$idx]['pk_no'] = $paket->pivot->pk_no;
-              $result['paket'][$idx]['pk_harga'] = $paket->pivot->pk_harga;
-              $result['tagihan'] += $paket->pivot->pk_harga;
-        }
+      foreach ($klien->paket_internet as $idx => $paket) {
+          $result['paket'][$idx]['pinet_id'] = $paket->pinet_id;
+          $result['paket'][$idx]['pinet_tipe'] = $paket->pinet_tipe;
+          $result['paket'][$idx]['pinet_harga'] = $paket->pinet_harga;
+          $result['paket'][$idx]['pk_no'] = $paket->pivot->pk_no;
+          $result['paket'][$idx]['pk_harga'] = $paket->pivot->pk_harga;
+          $result['tagihan'] += $paket->pivot->pk_harga;
+      }
+
       $result['ppn'] = ($result['tagihan']*10/100);
       $result['totalTagihan'] = $result['tagihan']+$result['ppn'];
       // return $result;
 
       [$filename,$path] = $this->coreCetakPDFbyTCPDF($user,$result);
-        $file = new class($filename,$path){
-            private $path;
-            private $filename;
-            
-            public function __construct($filename, $path) {
-              $this->path = $path;
-              $this->filename = $filename;
-            }
+      $file = new class($filename,$path){
+        private $path;
+        private $filename;
+              
+        public function __construct($filename, $path) {
+          $this->path = $path;
+          $this->filename = $filename;
+        }
 
-            public function path(){
-              return $this->path;
-            }
+        public function path(){
+          return $this->path;
+        }
 
-            public function getClientOriginalName(){
-              return $this->filename;
-            }
-        };
+        public function getClientOriginalName(){
+          return $this->filename;
+        }
+      };
 
-      $digitalsigning->internalCreateSign($file);
-
-      Tagihan_Klien::create([
+      $tagihan = Tagihan_Klien::create([
         'tagihan_no'=>$result['tagihan_no'],
         'tagihan_periode'=>date("ym"),
         'tagihan_ppn'=>$result['ppn'],
@@ -133,6 +133,10 @@ class DaftarKlien extends Controller
         'pk_no'=>$result['paket'][0]['pk_no'],
         'k_id'=>$result['k_id'],
       ]);
+      
+      $digitalsigning->internalCreateSign($file,$tagihan);
+
+      Storage::disk('frandrive')->delete('signed/'.$filename);
 
       return redirect()->route('employee.daftar.klien.tagihan');
 
@@ -263,7 +267,7 @@ class DaftarKlien extends Controller
       $pdf->writeHTML($html,true,false, true, false, '');
       $pdf->lastPage();
       // dd(storage_path('app/encryptstorage/signed/'.'Inv-'.base64_encode($result['tagihan_no'])));
-      $filename = 'Inv-'.base64_encode($result['tagihan_no']).'.pdf';
+      $filename = 'Inv-'.str_replace(' ','',$result['k_namalengkap']).'.pdf';
       $path = storage_path('app/encryptstorage/signed/'.$filename);
       $pdf->Output($path, 'F');
       return [$filename,$path];

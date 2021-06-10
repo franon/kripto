@@ -4,6 +4,7 @@ use App\Http\Controllers\Employee\DigitalSignature;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Employee\Drive\FileProcessing;
 use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\employee\internal\DaftarPaket;
 use App\Http\Controllers\employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\enkripsirsa;
@@ -74,6 +75,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('klien/tagihan', [DaftarKlien::class, 'showDaftarKlienTagihan'])->name('klien.tagihan');
             Route::get('klien/cetakpdf/{klien_id}', [DaftarKlien::class, 'cetakPDFKlienTagihan'])->name('klien.tagihan.cetak');
 
+        });
+
+        Route::prefix('internal')->name('internal.')->group(function(){
+            Route::get('paket/internet',[DaftarPaket::class, 'showPaketInternet'])->name('paket_internet');
+            Route::get('paket/internet/tambah',[DaftarPaket::class, 'showCreatePaketInternet'])->name('paket_internet.tambah');
+            Route::post('paket/internet/tambah/proses',[DaftarPaket::class, 'createPaketInternet'])->name('paket_internet.tambah.proses');
         });
 
     });
