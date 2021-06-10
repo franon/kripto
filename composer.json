@@ -6,6 +6,9 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-bcmath": "*",
+        "ext-gmp": "*",
+        "doctrine/dbal": "^3.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -13,10 +16,7 @@
         "laravel/tinker": "^2.5",
         "setasign/fpdi": "^2.3",
         "smalot/pdfparser": "^1.0",
-        "tecnickcom/tcpdf": "^6.4",
-        "ext-bcmath": "*",
-        "ext-gmp": "*"
-        
+        "tecnickcom/tcpdf": "^6.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

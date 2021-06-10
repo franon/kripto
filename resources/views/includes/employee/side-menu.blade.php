@@ -43,7 +43,8 @@
           </li>
           <li><a><i class="fa fa-table"></i> Tagihan <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
-              <li><a href="tables.html">Tagihan Pelanggan</a></li>
+              <li><a href="{{ route('employee.daftar.klien') }}">Daftar Pelanggan</a></li>
+              <li><a href="{{ route('employee.daftar.klien.tagihan') }}">Tagihan Pelanggan</a></li>
             </ul>
           </li>
           <li><a><i class="fa fa-key"></i> Pengolahan Kunci <span class="fa fa-chevron-down"></span></a>

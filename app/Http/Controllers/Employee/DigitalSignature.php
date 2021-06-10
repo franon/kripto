@@ -69,6 +69,42 @@ class DigitalSignature extends SimpleDrive
         return redirect()->route('employee.drive');
     }
 
+    public function internalCreateSign($file){
+        $rsa = new Encryption();
+        $hash = new Hashing();
+        $defaultDirectory = 'signed/';
+
+        //* 1. message_digest = sha256(M)
+        // $md1 = hash('sha256', $this->extractDocument('pdf', $request->file->path()));
+        $md = $hash->hash('sha256',$this->extractDocument('pdf', $file->path()));
+
+        //* 2. digital_signature = RSA-1024(message_digest)
+        $digitalSign = $rsa->createSignature($md); //? output digital_sign & pubkey
+
+        //* 3. Attachment Digital sign into PDF
+        $filename = $md.'.pdf'; $path = $defaultDirectory.$filename;
+        $fileSignatured = $this->signDocument($file,$digitalSign,$path);
+
+        //* 4. Upload File Signatured
+        $this->uploadFiles($path,$fileSignatured);
+        $directory = Direktori::find('dir-02');
+        $directory->file()->create([
+            'file_id'=>'file-'.sha1(md5(microtime(true))),
+            'file_nama'=>$filename,
+            'file_alias'=>$file->getClientOriginalName(),
+            'file_tipe'=>'pdf',
+            'file_jalur'=>$directory->dir_jalur,
+            'file_jalurutuh'=>$path,
+            'file_ukuran'=>filesize($file->path()),
+            'p_id'=>Auth::user()->p_id,
+            'pembuat'=>Auth::user()->p_namapengguna,
+            'tanggal_buat'=>date('Y-m-d'),
+            'dir_nama'=>$directory->dir_nama
+        ]);
+        
+        return redirect()->route('employee.drive');
+    }
+
     public function verifySign(Request $request){
         $rsa = new Encryption();
         $hash = new Hashing();
@@ -116,10 +152,9 @@ class DigitalSignature extends SimpleDrive
         $pageCount = $pdf->setSourceFile($file->path());
 
         $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor($user->u_username);
+        $pdf->SetAuthor($user->p_namapengguna);
         $pdf->SetTitle('Invoice-1');
         $pdf->SetSubject('Invoice perusahaan-X');
-        $pdf->SetKeywords('Invoice, aprroved');
 
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);

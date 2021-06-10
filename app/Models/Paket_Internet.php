@@ -12,6 +12,9 @@ class Paket_Internet extends Model
     protected $table = 'paket_internet';
     protected $primaryKey = 'pinet_id';
     protected $guarded = [];
+    public $incrementing = false;
+    protected $keyType  = 'string';
+    public $timestamps = false;
 
     public function klien(){
         return $this->belongsToMany(Klien::class,'paket_klien','pinet_id','k_id');

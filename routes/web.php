@@ -4,6 +4,7 @@ use App\Http\Controllers\Employee\DigitalSignature;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Employee\Drive\FileProcessing;
 use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\enkripsirsa;
 use App\Http\Controllers\KriptoTemp1;
@@ -63,6 +64,16 @@ Route::middleware(['auth'])->group(function () {
             Route::post('sign/process', [DigitalSignature::class, 'createSign'])->name('sign.upload');
             Route::get('verify', [DigitalSignature::class, 'show_FormVerify'])->name('verify');
             Route::post('verify/process', [DigitalSignature::class, 'verifySign'])->name('verify.upload');
+        });
+
+        Route::prefix('daftar')->name('daftar.')->group(function(){
+            Route::get('klien', [DaftarKlien::class, 'showDaftarKlien'])->name('klien');
+            Route::get('klien/tambah', [DaftarKlien::class, 'showCreateDataKlien'])->name('klien.tambah');
+            Route::post('klien/tambah/proses', [DaftarKlien::class, 'createDataKlien'])->name('klien.tambah.proses');
+
+            Route::get('klien/tagihan', [DaftarKlien::class, 'showDaftarKlienTagihan'])->name('klien.tagihan');
+            Route::get('klien/cetakpdf/{klien_id}', [DaftarKlien::class, 'cetakPDFKlienTagihan'])->name('klien.tagihan.cetak');
+
         });
 
     });

@@ -14,7 +14,8 @@ class CreateKlienTable extends Migration
     public function up()
     {
         Schema::create('klien', function (Blueprint $table) {
-            $table->string('k_id');
+            // $table->string('k_id');
+            $table->increments('k_id');
             $table->string('k_namapengguna');
             $table->string('k_namalengkap');
             $table->string('k_email')->nullable();
@@ -22,7 +23,7 @@ class CreateKlienTable extends Migration
             $table->string('k_alamat')->nullable();
             $table->string('no_hp')->nullable();
             $table->date('mulai_berlangganan');
-            $table->string('no_kontrak');
+            $table->string('no_kontrak')->nullable();
             $table->primary('k_id');
         });
     }
