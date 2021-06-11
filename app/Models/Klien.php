@@ -19,4 +19,9 @@ class Klien extends Model
     public function paket_internet(){
         return $this->belongsToMany(Paket_Internet::class,'paket_klien','k_id','pinet_id')->withPivot('pk_no','pk_harga');
     }
+
+    protected $hidden = [
+        'k_password',
+        'k_email'
+    ];
 }

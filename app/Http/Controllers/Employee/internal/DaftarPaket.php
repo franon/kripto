@@ -3,21 +3,22 @@
 namespace App\Http\Controllers\employee\internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomController;
 use App\Models\Klien;
 use App\Models\Paket_Internet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class DaftarPaket extends Controller
+class DaftarPaket extends CustomController
 {
     public function showPaketInternet(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $paket = Paket_Internet::all();
         return view('employee.internal.daftar-paket',compact('user','paket'));
     }
 
     public function showCreatePaketInternet(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.internal.paket-tambah', compact('user'));
     }
 

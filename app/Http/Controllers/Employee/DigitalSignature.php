@@ -20,16 +20,17 @@ class DigitalSignature extends SimpleDrive
 {
     // protected $user = Auth::user();
     public function show_FormSign(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-signing', compact('user'));
     }
 
     public function show_FormVerify(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-verifying', compact('user'));
     }
     
     public function createSign(Request $request){
+        $user = $this->sanitizeUser(Auth::user()); 
         $rsa = new Encryption();
         $hash = new Hashing();
         $this->validate($request, [
@@ -60,8 +61,8 @@ class DigitalSignature extends SimpleDrive
             'file_jalur'=>$directory->dir_jalur,
             'file_jalurutuh'=>$path,
             'file_ukuran'=>$file->getSize(),
-            'p_id'=>Auth::user()->p_id,
-            'pembuat'=>Auth::user()->p_namapengguna,
+            'p_id'=>$user->p_id,
+            'pembuat'=>$user->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d'),
             'dir_nama'=>$directory->dir_nama
         ]);
@@ -70,6 +71,7 @@ class DigitalSignature extends SimpleDrive
     }
 
     public function internalCreateSign($file,$tagihan){
+        $user = $this->sanitizeUser(Auth::user()); 
         $rsa = new Encryption();
         $hash = new Hashing();
         $defaultDirectory = 'signed/';
@@ -96,8 +98,8 @@ class DigitalSignature extends SimpleDrive
             'file_jalur'=>$directory->dir_jalur,
             'file_jalurutuh'=>$path,
             'file_ukuran'=>filesize($file->path()),
-            'p_id'=>Auth::user()->p_id,
-            'pembuat'=>Auth::user()->p_namapengguna,
+            'p_id'=>$user->p_id,
+            'pembuat'=>$user->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d'),
             'dir_nama'=>$directory->dir_nama,
             'tagihan_id'=> $tagihan->tagihan_id
@@ -147,7 +149,7 @@ class DigitalSignature extends SimpleDrive
     }
 
     public function signDocument($file, $digitalSign,$path){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $pdf = new Fpdi();
         $filename = base64_encode($path);
         $pageCount = $pdf->setSourceFile($file->path());

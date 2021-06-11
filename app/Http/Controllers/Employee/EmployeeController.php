@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EmployeeController extends Controller
+class EmployeeController extends CustomController
 {
     public function index()
     {
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.dashboard',compact('user'));
     }
 

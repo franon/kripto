@@ -16,11 +16,12 @@ class FileProcessing extends SimpleDrive
     
     public function show_FileEncryption(){
         // dd(storage_path('app/encryptstorage'),Storage::disk('frandrive'));
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-encryption',compact('user'));
     }
 
     public function process_FileEncryption(Request $request){
+        $user = $this->sanitizeUser(Auth::user()); 
         $encryption = new Encryption();
         $this->validate($request, [
             'file'=>'required|file',
@@ -41,8 +42,8 @@ class FileProcessing extends SimpleDrive
             'file_jalur'=>'encrypted/',
             'file_jalurutuh'=>$path,
             'file_ukuran'=>$file->getSize(),
-            'p_id'=>Auth::user()->p_id,
-            'pembuat'=>Auth::user()->p_namapengguna,
+            'p_id'=>$user->p_id,
+            'pembuat'=>$user->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d'),
             'dir_nama'=>$directory->dir_nama
         ]);
@@ -51,7 +52,7 @@ class FileProcessing extends SimpleDrive
     }
 
     public function show_FileDecryption(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-decryption',compact('user'));
     }
 

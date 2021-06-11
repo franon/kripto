@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Employee\Drive;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomController;
 use App\Http\Controllers\Encryption;
 use App\Models\Direktori;
 use App\Models\FileProcessing;
@@ -14,12 +15,11 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use League\CommonMark\Inline\Element\Strong;
 
-class SimpleDrive extends Controller
+class SimpleDrive extends CustomController
 {
     public function showDirectory(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user());
         // $directory =  Storage::disk('frandrive')->directories();
-        // dd($directory);
         $directory = Direktori::get();
         return view('employee.drive.drive', compact('user','directory'));
     }
@@ -27,7 +27,7 @@ class SimpleDrive extends Controller
     public function showFiles($currentDirectory){
         $currentDirectory = base64_decode($currentDirectory);
         // return Storage::makeDirectory($currentDirectory.'testing');
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user());
         //! 1. Show Directory
         // $directory = Storage::disk('frandrive')->directories($currentDirectory);dd($directory);
         $directory = Direktori::where('dir_didalam','=',$currentDirectory)->get();

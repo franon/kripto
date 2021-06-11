@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\employee\internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomController;
 use App\Models\Direktori as ModelsDirektori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class Direktori extends Controller
+class Direktori extends CustomController
 {
     public function showDirektori(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $direktori = ModelsDirektori::all();
         return view('employee.internal.direktori.daftar-direktori',compact('user','direktori'));
     }
 
     public function showCreateDirektori(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.internal.direktori.direktori-tambah', compact('user'));
     }
 
     public function createDirektori(Request $request){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $this->validate($request,[
             'dir_id'=>'required',
             'dir_nama'=>'required',

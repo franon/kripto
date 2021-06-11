@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\employee\tagihan;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CustomController;
 use App\Http\Controllers\Employee\DigitalSignature;
 use App\Models\Klien;
 use App\Models\Paket_Internet;
@@ -16,16 +17,16 @@ use Hamcrest\Type\IsObject;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
-class DaftarKlien extends Controller
+class DaftarKlien extends CustomController
 {
     public function showDaftarKlien(){
-        $user = Auth::user();
-        $klien = Klien::all();
+        $user = $this->sanitizeUser(Auth::user()); 
+        $klien = $this->sanitizeKlien(Klien::all()->toArray());
         return view('employee.tagihan.daftar-klien',compact('user','klien'));
     }
 
     public function showCreateDataKlien(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $paket_internet = Paket_Internet::all();
         return view('employee.tagihan.klien-tambah',compact('user','paket_internet'));
     }
@@ -63,7 +64,7 @@ class DaftarKlien extends Controller
     }
 
     public function showDaftarKlienTagihan(){
-        $user = Auth::user();
+        $user = $this->sanitizeUser(Auth::user()); 
         $klienberlangganan = [];
         $seluruhKlien = Klien::with('paket_internet')->get();
         foreach ($seluruhKlien as $idx_k => $klien) {
@@ -87,7 +88,7 @@ class DaftarKlien extends Controller
 
     public function cetakPDFKlienTagihan($klien_id){
       $digitalsigning = new DigitalSignature();
-      $user = Auth::user();
+      $user = $this->sanitizeUser(Auth::user()); 
       $klien = Klien::find($klien_id);
       $result = $klien->toArray();$result['tagihan'] = 0;
       $result['tagihan_no'] = $result['no_kontrak'].'/'.date("ym");
