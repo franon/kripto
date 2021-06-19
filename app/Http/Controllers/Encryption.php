@@ -29,36 +29,29 @@ class Encryption extends Controller
         // return $cipher;
 
     }
-    public function cobaenkrip_RSA(enkripsirsa $rsa){
+    public function cobaenkrip_RSA(RsaEncryption $rsa){
         $message = 'shockdartpesan01';
         $key = 'kuncifran!@#$%10';
         $rsa_1024 = $rsa->encrypt();
     }
 
-    public function encrypt_AES($message){
+    public function encrypt_AES($message, $key){
     
-        $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+        // $key = 'kuncifran!@#$%10kuncifran!@#$%10';
         $iv = 'c0~JO&HN+~!!zMyh';
-        // $message = 'shockdartpesan01';
         $aes = new AES_Mode();
         // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
         // dd(microtime(true)-$starttime);
-        // dd($cipher);
         return $cipher;
     }
 
-    public function decrypt_AES($cipher){
+    public function decrypt_AES($cipher,$key){
         $message = '';
-        // try {
-            $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-            $iv = 'c0~JO&HN+~!!zMyh';
-            $aes = new AES_Mode();
-            $message = $aes->CBC_Decrypt($cipher,$key,$iv);
-        // } catch (Exception $e) {
-            // return abort(404);
-            // echo $e->getMessage(); die;
-        // }
+            // $key = 'kuncifran!@#$%10kuncifran!@#$%10';
+        $iv = 'c0~JO&HN+~!!zMyh';
+        $aes = new AES_Mode();
+        $message = $aes->CBC_Decrypt($cipher,$key,$iv);
         return $message;
     }
 

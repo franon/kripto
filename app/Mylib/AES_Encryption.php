@@ -329,6 +329,7 @@ class AES_Encryption
     }
 
     public function ordlist($char){
+        // dd($char);
         for ($i=0; $i < 16; $i++) {
             $res[$i] = ord($char[$i]) & 0xff;
         }
@@ -374,7 +375,7 @@ class AES_Encryption
     }
 
     public function encrypt($message, $word){
-        $Nr = 14;
+        $Nr = 14; 
         $state = $this->plaintext2State($this->convertTo('dec',$message)); //* 2D array
 
         //* Initial Round

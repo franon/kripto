@@ -15,6 +15,7 @@ class FileProcessing extends SimpleDrive
 {
     
     public function show_FileEncryption(){
+        // $clientIP = \Request::getClientIp(true); dd($clientIP);
         // dd(storage_path('app/encryptstorage'),Storage::disk('frandrive'));
         $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-encryption',compact('user'));
@@ -25,12 +26,11 @@ class FileProcessing extends SimpleDrive
         $encryption = new Encryption();
         $this->validate($request, [
             'file'=>'required|file',
-            'key'=>'required|size:32'
+            'kunci'=>'required|size:32'
             ]);
         $file = $request->file; $filename = $file->getClientOriginalName();
         $path = 'encrypted/'.$filename;
-
-        $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()));
+        $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
         $this->uploadFiles($path, $encrypted);
         $directory = Direktori::find('dir-01');
@@ -71,11 +71,11 @@ class FileProcessing extends SimpleDrive
     public function process_FileDecryption(Request $request, Encryption $decryption){
         $this->validate($request, [
             'file'=>'required',
-            'keterangan'=>'required'
+            'kunci'=>'required|size:32'
             ]);
         $file = $request->file;
-        $message = $decryption->decrypt_AES($this->fileHandler('open',$file->path()));
-        // dd($message);
+        $message = $decryption->decrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
+        if (!$message) return redirect(url()->previous())->with('error','Harap cek file');
         return response()->make($message, 200, [
             'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
             'Content-Disposition' => 'attachment; filename="' . pathinfo($file->getClientOriginalName(), PATHINFO_BASENAME) . '"'

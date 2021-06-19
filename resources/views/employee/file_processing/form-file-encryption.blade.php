@@ -41,13 +41,13 @@
                     @csrf
 
                     <div class="form-group">
-                        <b>File</b>
-                        <input type="file" name="file">
+                        <label for="file"><h2>File</h2></label>
+                        <input type="file" name="file" class="form-control-file" id="file"/>
                     </div>
 
                     <div class="form-group">
-                        <b>Kunci</b>
-                        <textarea name="key" class="form-control" cols="15" rows="2"></textarea>
+                        <label for="kunci"><b>Kunci</b></label>
+                        <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/>
                     </div>
 
                     <input type="submit" value="upload" class="btn btn-primary">

@@ -29,26 +29,23 @@
             </div>
             <div class="x_content">
               <p>Unggah File yang akan di dekripsi</p>
-              @if (count($errors)>0)
-                    <div class="alert alert-danger">
-                        @foreach ($errors->all() as $error)
-                            {{ $error }} <br/>
-                        @endforeach
-                    </div>
-                @endif
-              
+              @if (session('error'))
+              <div class="alert alert-danger"> 
+                    {{ session('error') }}
+              </div>
+              @endif
                 <form action="{{route('employee.file.decrypt.upload')}}" method="post" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="form-group">
-                        <b>File</b>
-                        <input type="file" name="file">
-                    </div>
+                  <div class="form-group">
+                      <label for="file"><h2>File</h2></label>
+                      <input type="file" name="file" class="form-control-file" id="file"/>
+                  </div>
 
-                    <div class="form-group">
-                        <b>Keterangan</b>
-                        <textarea name="keterangan" class="form-control" cols="30" rows="2"></textarea>
-                    </div>
+                  <div class="form-group">
+                      <label for="kunci"><b>Kunci</b></label>
+                      <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/>
+                  </div>
 
                     <input type="submit" value="upload" class="btn btn-primary">
                 </form>

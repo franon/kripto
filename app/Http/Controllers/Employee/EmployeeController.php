@@ -11,7 +11,7 @@ class EmployeeController extends CustomController
 {
     public function index()
     {
-        $user = $this->sanitizeUser(Auth::user()); 
+        $user = $this->sanitizeUser(Auth::user());
         return view('employee.dashboard',compact('user'));
     }
 
