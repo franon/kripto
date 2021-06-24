@@ -25,7 +25,7 @@ class FileProcessing extends SimpleDrive
         $user = $this->sanitizeUser(Auth::user()); 
         $encryption = new Encryption();
         $this->validate($request, [
-            'file'=>'required|file',
+            'file'=>'required|file|max:10240',
             'kunci'=>'required|size:32'
             ]);
         $file = $request->file; $filename = $file->getClientOriginalName();
@@ -33,7 +33,7 @@ class FileProcessing extends SimpleDrive
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
         $this->uploadFiles($path, $encrypted);
-        $directory = Direktori::find('dir-01');
+        $directory = Direktori::firstWhere('dir_jalur', 'encrypted/');
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
@@ -70,7 +70,7 @@ class FileProcessing extends SimpleDrive
     
     public function process_FileDecryption(Request $request, Encryption $decryption){
         $this->validate($request, [
-            'file'=>'required',
+            'file'=>'required|file|max:10240',
             'kunci'=>'required|size:32'
             ]);
         $file = $request->file;

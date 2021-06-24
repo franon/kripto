@@ -15,13 +15,13 @@
                 <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.internal.direktori.tambah.proses') }}">
                     @csrf
 
-                    <div class="item form-group">
+                    {{-- <div class="item form-group">
                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="dir_id">ID Folder <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 ">
                             <input type="text" id="dir_id" required="required" class="form-control " name="dir_id">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="item form-group">
                         <label class="col-form-label col-md-3 col-sm-3 label-align" for="dir_nama">Nama Folder <span class="required">*</span>
                         </label>
@@ -51,7 +51,6 @@
                             <button type="submit" class="btn btn-success" name="submit">Submit</button>
                         </div>
                     </div>
-
                 </form>
             </div>
         </div>

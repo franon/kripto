@@ -47,7 +47,7 @@
                     <td class=" ">{{$k->no_hp}} <i class="success fa fa-long-arrow-up"></i></td>
                     <td class=" ">{{$k->mulai_berlangganan}}</td>
                     <td class=" ">{{$k->no_kontrak}}</td>
-                    <td class=" last"><a href="#">Detail</a>
+                    <td class=" last"><a href="{{route('employee.daftar.klien.detail',['k_id'=>$k->k_id])}}">Detail</a>
                     </td>
                   </tr>
                 @endforeach

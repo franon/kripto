@@ -6,13 +6,10 @@ use App\Http\Controllers\Employee\Drive\FileProcessing;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Employee\internal\DaftarPaket;
 use App\Http\Controllers\Employee\internal\Direktori;
+use App\Http\Controllers\Employee\MultiSec;
 use App\Http\Controllers\Employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\enkripsirsa;
-use App\Http\Controllers\KriptoTemp1;
-use App\Http\Controllers\sha256;
 use App\Http\Controllers\Encryption;
-use App\Http\Controllers\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,16 +24,16 @@ use App\Http\Controllers\UploadController;
 
 Route::get('/', function () {
     // phpinfo();
-    // return redirect()->route('login');
-    return view('welcome');
+    return redirect()->route('login');
+    // return view('welcome');
 });
-
-Route::get('sha256', [sha256::class, 'test']);
 
 route::get('coba256',[Encryption::class,'cobaenkrip_256']);
 route::get('cobarsa',[Encryption::class,'cobaenkrip_RSA']);
 
 Route::get('ver/{penentu}/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('public.download');
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->namespace('dashboard')->group(function(){
@@ -67,16 +64,21 @@ Route::middleware(['auth'])->group(function () {
             Route::post('sign/process', [DigitalSignature::class, 'createSign'])->name('sign.upload');
             Route::get('verify', [DigitalSignature::class, 'show_FormVerify'])->name('verify');
             Route::post('verify/process', [DigitalSignature::class, 'verifySign'])->name('verify.upload');
+
+            Route::get('multisec',[MultiSec::class, 'show_FormMultisec'])->name('multisec');
+            Route::post('multisec/process',[MultiSec::class, 'process_Multisec'])->name('multisec.upload');
         });
 
         Route::prefix('daftar')->name('daftar.')->group(function(){
             Route::get('klien', [DaftarKlien::class, 'showDaftarKlien'])->name('klien');
             Route::get('klien/tambah', [DaftarKlien::class, 'showCreateDataKlien'])->name('klien.tambah');
             Route::post('klien/tambah/proses', [DaftarKlien::class, 'createDataKlien'])->name('klien.tambah.proses');
-
+            Route::post('klien/tambah/paket/proses', [DaftarKlien::class, 'addPaketKlien'])->name('klien.tambah.paket.proses');
+            
             Route::get('klien/tagihan', [DaftarKlien::class, 'showDaftarKlienTagihan'])->name('klien.tagihan');
             Route::get('klien/cetakpdf/{klien_id}', [DaftarKlien::class, 'cetakPDFKlienTagihan'])->name('klien.tagihan.cetak');
-
+            
+            Route::get('klien/{k_id}', [DaftarKlien::class, 'showDetailKlien'])->name('klien.detail');
         });
 
         Route::prefix('internal')->name('internal.')->group(function(){

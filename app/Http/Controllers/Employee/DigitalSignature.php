@@ -34,7 +34,7 @@ class DigitalSignature extends SimpleDrive
         $rsa = new Encryption();
         $hash = new Hashing();
         $this->validate($request, [
-            'file'=>'required',
+            'file'=>'required|file|max:10240|mimes:pdf',
         ]);
         $file = $request->file;
         $defaultDirectory = 'signed/';
@@ -52,7 +52,7 @@ class DigitalSignature extends SimpleDrive
 
         //* 4. Upload File Signatured
         $this->uploadFiles($path,$fileSignatured);
-        $directory = Direktori::find('dir-02');
+        $directory = Direktori::firstWhere('dir_jalur','signed/');
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
@@ -112,7 +112,7 @@ class DigitalSignature extends SimpleDrive
         $rsa = new Encryption();
         $hash = new Hashing();
         $this->validate($request, [
-            'file'=>'required',
+            'file'=>'required|file|max:10240',
         ]);
 
         //* 1. Separate signatures from documents

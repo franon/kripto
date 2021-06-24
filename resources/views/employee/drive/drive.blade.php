@@ -46,9 +46,44 @@
               |
               <!-- Buat Folder -->
               <div class="btn-group">
-                <button type="button" class="btn btn-secondary"> <i class="fa fa-plus" aria-hidden="true"></i>
-                  Buat Folder</button>
-                  
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#createFolder"> <i class="fa fa-plus" aria-hidden="true"></i>Buat Folder</button>
+              </div>
+
+              <!-- Modal -->
+              <div class="modal fade" id="createFolder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Buat Folder</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.internal.direktori.tambah.proses') }}">
+                        @csrf
+                        <div class="item form-group">
+                            <label class="col-form-label col-md-3 col-sm-3 label-align" for="dir_nama">Nama Folder <span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                                <input type="text" id="dir_nama" required="required" class="form-control" name="dir_nama">
+                            </div>
+                        </div>
+                        <div class="item form-group">
+                          @php $direktori = explode('/',url()->current());
+                          $direktori = base64_decode(end($direktori));
+                          @endphp
+                            <label class="col-form-label col-md-3 col-sm-3 label-align" for="dir_parent">Parent Folder <span class="required">*</span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                                <input type="text" id="dir_parent" class="form-control" name="dir_parent" value="{{$direktori}}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
+                      <button type="submit" class="btn btn-success" name="submit">Buat Folder</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div class="clearfix"></div>

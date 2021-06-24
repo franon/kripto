@@ -20,7 +20,7 @@ class SimpleDrive extends CustomController
     public function showDirectory(){
         $user = $this->sanitizeUser(Auth::user());
         // $directory =  Storage::disk('frandrive')->directories();
-        $directory = Direktori::get();
+        $directory = Direktori::whereNull('dir_didalam')->get();
         return view('employee.drive.drive', compact('user','directory'));
     }
 

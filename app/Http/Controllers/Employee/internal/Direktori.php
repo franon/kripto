@@ -25,16 +25,16 @@ class Direktori extends CustomController
     public function createDirektori(Request $request){
         $user = $this->sanitizeUser(Auth::user()); 
         $this->validate($request,[
-            'dir_id'=>'required',
+            // 'dir_id'=>'required',
             'dir_nama'=>'required',
-            'dir_jalur'=>'required'
+            // 'dir_jalur'=>'required'
         ]);
 
         $direktori = ModelsDirektori::create([
-            'dir_id'=>$request->dir_id,
+            'dir_id'=>'dir-'.sha1(md5(microtime(true))),
             'p_id'=>$user->p_id,
             'dir_nama'=>$request->dir_nama,
-            'dir_jalur'=>$request->dir_jalur,
+            'dir_jalur'=>$request->dir_parent.trim($request->dir_nama).'/',
             'dir_didalam'=>$request->dir_parent,
             'pembuat'=>$user->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d')

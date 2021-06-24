@@ -25,6 +25,15 @@ class DaftarKlien extends CustomController
         return view('employee.tagihan.daftar-klien',compact('user','klien'));
     }
 
+    public function showDetailKlien($k_id){
+      $user = $this->sanitizeUser(Auth::user());
+      $klien = Klien::with('paket_internet')->find($k_id);
+      $paket_internet = Paket_Internet::all();
+      // dd($klien->k_id);
+      // return ($klien);
+      return view('employee.tagihan.detail-klien',compact('user','klien','paket_internet'));
+  }
+
     public function showCreateDataKlien(){
         $user = $this->sanitizeUser(Auth::user()); 
         $paket_internet = Paket_Internet::all();
@@ -62,6 +71,24 @@ class DaftarKlien extends CustomController
 
         return \redirect()->route('employee.daftar.klien');
     }
+
+    public function addPaketKlien(Request $request){
+      $this->validate($request,[
+          'k_id'=>'required',
+          'paket_internet'=>'required',
+      ]);
+      $daftarPaketInternet = Paket_Internet::firstWhere('pinet_id',$request->paket_internet);
+      // dd($daftarPaketInternet,$request->paket_internet);
+      $klien = Klien::find($request->k_id);
+      $klien->paket_internet()->attach($daftarPaketInternet->pinet_id,[
+          'pk_id'=>'pk-'.sha1(md5(microtime(true))),
+          'pk_no'=>'pk-gmdp-'.$request->k_id,
+          'pk_harga'=> $daftarPaketInternet->pinet_harga
+      ]);
+
+      // return \redirect()->route('employee.daftar.klien.detail',['k_id'=>$request->k_id]);
+      return back();
+  }
 
     public function showDaftarKlienTagihan(){
         $user = $this->sanitizeUser(Auth::user()); 

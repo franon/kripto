@@ -39,7 +39,7 @@
               <li><a href="{{ route('employee.file.decrypt') }}">Dekripsi File</a></li>
               <li><a href="{{ route('employee.file.sign') }}">Tanda Tangan File</a></li>
               <li><a href="{{ route('employee.file.verify') }}">Verifikasi Tanda Tangan</a></li>
-              <li><a href="glyphicons.html">Multi Pengamanan File</a></li>
+              <li><a href="{{ route('employee.file.multisec') }}">Multi Pengamanan File</a></li>
             </ul>
           </li>
           <li><a><i class="fa fa-table"></i> Tagihan <span class="fa fa-chevron-down"></span></a>
