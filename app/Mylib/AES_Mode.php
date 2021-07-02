@@ -59,7 +59,7 @@ class AES_Mode extends AES_Encryption
     
     public function CBC_Decrypt($cipher, $key, $iv){
         $cipher = base64_decode($cipher);
-        $n = strlen($cipher)/16;if(is_float($n)) return false;
+        $n = strlen($cipher)/16;if(!is_int($n)) return false;
         $message = "";
         $word = $this->keyExpansion($this->keyDec($key));
         for ($i=0; $i < $n; $i++) {

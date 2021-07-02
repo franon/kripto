@@ -66,20 +66,20 @@ class Encryption extends Controller
     }
 
     public function encrypt_AES($message, $key){
-    
-        // $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-        $iv = 'c0~JO&HN+~!!zMyh';
+        // $iv = 'c0~JO&HN+~!!zMyh';
+        $iv = random_bytes(16);
         $aes = new AES_Mode();
         // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
         // dd(microtime(true)-$starttime);
-        return $cipher;
+        return $iv.$cipher;
     }
 
     public function decrypt_AES($cipher,$key){
         $message = '';
-            // $key = 'kuncifran!@#$%10kuncifran!@#$%10';
-        $iv = 'c0~JO&HN+~!!zMyh';
+        // $iv = 'c0~JO&HN+~!!zMyh';
+        $iv = substr($cipher,0,16);
+        $cipher = substr($cipher,16);
         $aes = new AES_Mode();
         $message = $aes->CBC_Decrypt($cipher,$key,$iv);
         return $message;

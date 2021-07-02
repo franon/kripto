@@ -11,6 +11,7 @@ use App\Http\Controllers\Employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Encryption;
 use App\Http\Controllers\Klien\Bill;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,10 @@ use App\Http\Controllers\Klien\Bill;
 |
 */
 
-Route::get('/', function () { 
+Route::get('/', function () {
+    if (Auth::check()) {
+        echo 'wow';
+    }
     return redirect()->route('login'); // return view('welcome'); 
 });
 
@@ -37,14 +41,9 @@ Route::get('klien/bill',[Bill::class,'index'])->name('bill');
 Route::post('klien/bill/detail',[Bill::class,'detail'])->name('bill.detail');
 
 Route::middleware(['auth'])->group(function () {
-    Route::prefix('dashboard')->namespace('dashboard')->group(function(){
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard-default');
-
-        // Route::get('/admin', [,'']);
-        // Route::get('/employee', [,'']);
-    });
+    Route::get('/dashboard', function () {
+        return redirect()->route('employee.dashboard');
+    })->name('dashboard-default');
 
     Route::prefix('employee')->name('employee.')->group(function(){
         Route::get('dashboard',[EmployeeController::class,'index'])->name('dashboard');

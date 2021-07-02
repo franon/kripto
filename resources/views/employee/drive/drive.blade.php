@@ -142,7 +142,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.internal.direktori.tambah.proses') }}">
+        <form id="createFolder" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.internal.direktori.tambah.proses') }}">
           @csrf
           <div class="item form-group">
               <label class="col-form-label col-md-3 col-sm-3 label-align" for="dir_nama">Nama Folder <span class="required">*</span></label>
@@ -187,9 +187,9 @@
             </div>
           </div>
           <div class="item form-group">
-              <label class="col-form-label col-md-3 col-sm-3 label-align" for="kunci">Kunci <span class="required">*</span></label>
+              <label class="col-form-label col-md-3 col-sm-3 label-align" for="kunciEncrypt">Kunci <span class="required">*</span></label>
               <div class="col-md-6 col-sm-6 ">
-                <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/ required>
+                <input type="text" name="kunci" class="form-control" id="kunciEncrypt" minlength="32" maxlength="32"/ required>
               </div>
           </div>
       </div>
@@ -213,7 +213,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.file.decrypt.download') }}">
+        <form id="decryptFile" data-parsley-validate class="form-horizontal form-label-left" method="POST" action="{{ route('employee.file.decrypt.download') }}">
           @csrf
           <div class="item form-group">
             {{-- <label class="col-form-label col-md-3 col-sm-3 label-align" for="filename">Filename</label> --}}
@@ -222,9 +222,9 @@
             </div>
         </div>
           <div class="item form-group">
-              <label class="col-form-label col-md-3 col-sm-3 label-align" for="kunci">Kunci <span class="required">*</span></label>
+              <label class="col-form-label col-md-3 col-sm-3 label-align" for="kunciDecrypt">Kunci <span class="required">*</span></label>
               <div class="col-md-6 col-sm-6 ">
-                <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/ required>
+                <input type="text" name="kunci" class="form-control" id="kunciDecrypt" minlength="32" maxlength="32"/ required>
               </div>
           </div>
       </div>
