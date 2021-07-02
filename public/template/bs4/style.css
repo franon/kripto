@@ -11,7 +11,8 @@
     border: 1px solid #e3eaef;
     border-radius: 5px;
     position: relative;
-    margin-bottom: 20px
+    margin-bottom: 20px;
+    height: 90%;
 }
 
 .file-man-box .file-close {
@@ -36,16 +37,29 @@
 .file-man-box .file-download {
     font-size: 32px;
     color: #98a6ad;
-    position: absolute;
-    right: 10px
+    position: relative;
+    float: right;
+    right: 10px;
+}
+
+.file-man-box .file-unlock {
+    font-size: 32px;
+    color: #f8c108;
+    position: relative;
+    float: left;
+    left: 10px;
 }
 
 .file-man-box .file-download:hover {
     color: #313a46
 }
 
+.file-man-box .file-unlock:hover {
+    color: #AD8705;
+}
+
 .file-man-box .file-man-title {
-    padding-right: 25px
+    padding-right: 5px
 }
 
 .file-man-box:hover {

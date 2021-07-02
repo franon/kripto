@@ -49,7 +49,7 @@ class AES_Mode extends AES_Encryption
             $temp = $this->strxor(substr($message,$index,$index+16),$iv);
             // $starttime = \microtime(true);
             $iv = AES_Encryption::encrypt($temp, $word);
-            // echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
+            // echo 'Enc /16b: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
             $cipher .= $iv;
         }
         // dd($cipher);

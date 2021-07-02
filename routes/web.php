@@ -10,6 +10,7 @@ use App\Http\Controllers\Employee\MultiSec;
 use App\Http\Controllers\Employee\tagihan\DaftarKlien;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Encryption;
+use App\Http\Controllers\Klien\Bill;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,18 +23,18 @@ use App\Http\Controllers\Encryption;
 |
 */
 
-Route::get('/', function () {
-    // phpinfo();
-    return redirect()->route('login');
-    // return view('welcome');
+Route::get('/', function () { 
+    return redirect()->route('login'); // return view('welcome'); 
 });
 
+route::get('testing',[Encryption::class,'testing']);
 route::get('coba256',[Encryption::class,'cobaenkrip_256']);
 route::get('cobarsa',[Encryption::class,'cobaenkrip_RSA']);
 
 Route::get('ver/{penentu}/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('public.download');
 
-
+Route::get('klien/bill',[Bill::class,'index'])->name('bill');
+Route::post('klien/bill/detail',[Bill::class,'detail'])->name('bill.detail');
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->namespace('dashboard')->group(function(){
@@ -58,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('encrypt/upload', [FileProcessing::class, 'process_FileEncryption'])->name('encrypt.upload');
             Route::get('decrypt', [FileProcessing::class, 'show_FileDecryption'])->name('decrypt');
             Route::post('decrypt/upload', [FileProcessing::class, 'process_FileDecryption'])->name('decrypt.upload');
-            Route::get('decrypt/download/{filename}', [FileProcessing::class, 'process_DownloadFileDecryption'])->name('decrypt.download');
+            Route::post('decrypt/download', [FileProcessing::class, 'process_DownloadFileDecryption'])->name('decrypt.download');
 
             Route::get('sign', [DigitalSignature::class, 'show_FormSign'])->name('sign');
             Route::post('sign/process', [DigitalSignature::class, 'createSign'])->name('sign.upload');

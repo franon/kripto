@@ -24,12 +24,12 @@ class Hash
         
         //!Preprocessing
         // $message = 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq';
-        $length = strlen($message);
-        $message .= str_repeat(chr(0), 64 - (($length+8) & 0x3F));
-        $message[$length] = chr(0x80);
-        $message .= pack('N2',0, $length << 3);
+        $length = strlen($message); //* 3
+        $message .= str_repeat(chr(0), 64 - (($length+8) & 0x3F)); //* 0...n | n = 64-(3+8 & 63) = 54. sediakan nilai sbnyk len_message+8bit;
+        $message[$length] = chr(0x80); //* 8bit. setara = 10000000 = 128
+        $message .= pack('N2',0, $length << 3); //* 8bit ascii message has length = $length. | $length * 2^3 atau $length * 8;
 
-        //! Process the message in successive 512-bit chunks
+        //! Process the message in successive 512-bit(64byte) chunks
         $chunks = str_split($message, 64);
         foreach($chunks as $chunk){
             $word = [];
@@ -53,10 +53,10 @@ class Hash
             for ($i = 0; $i < 64; $i++) {
                 $s1 = $this->rightRotate($e,  6) ^ $this->rightRotate($e, 11) ^ $this->rightRotate($e, 25);
                 $ch = ($e & $f) ^ ($this->not($e) & $g);
-                $t1 = $this->add($h, $s1, $ch, $k[$i], $word[$i]);
+                $t1 = $this->add($h, $s1, $ch, $k[$i], $word[$i]); //* MAIN 1
                 $s0 = $this->rightRotate($a,  2) ^ $this->rightRotate($a, 13) ^ $this->rightRotate($a, 22);
                 $maj = ($a & $b) ^ ($a & $c) ^ ($b & $c);
-                $t2 = $this->add($s0, $maj);
+                $t2 = $this->add($s0, $maj); //* MAIN 2
 
                 $h = $g;
                 $g = $f;
@@ -103,6 +103,8 @@ class Hash
     }
 
     public function rightRotate($int, $amt){
+        //* int >> amt menghasilkan 0 bits diawalnya. 
+        //* do bitwise OR (n >> amt) with n << (32 - amt) to get last amt bits
         $invamt = 32 - $amt;
         $mask = (1 << $invamt) - 1;
         return (($int << $invamt) & 0xFFFFFFFF) | (($int >> $amt) & $mask);

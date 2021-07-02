@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    @include('includes.employee.footer')
     @stack('custom-js')
+    @include('includes.employee.footer')
   </body>
 </html>

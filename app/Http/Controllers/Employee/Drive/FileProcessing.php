@@ -28,18 +28,18 @@ class FileProcessing extends SimpleDrive
             'file'=>'required|file|max:10240',
             'kunci'=>'required|size:32'
             ]);
-        $file = $request->file; $filename = $file->getClientOriginalName();
-        $path = 'encrypted/'.$filename;
+        $file = $request->file; $filename = $file->getClientOriginalName().'.gmdp';
+        $directory = $request->direktori == null ? Direktori::firstWhere('dir_jalur', 'encrypted/') : Direktori::firstWhere('dir_jalur', $request->direktori);
+        $path = $directory->dir_jalur.$filename;
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
         $this->uploadFiles($path, $encrypted);
-        $directory = Direktori::firstWhere('dir_jalur', 'encrypted/');
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
             'file_alias'=>$filename,
             'file_tipe'=>$file->getClientOriginalExtension(),
-            'file_jalur'=>'encrypted/',
+            'file_jalur'=>$path,
             'file_jalurutuh'=>$path,
             'file_ukuran'=>$file->getSize(),
             'p_id'=>$user->p_id,
@@ -56,11 +56,15 @@ class FileProcessing extends SimpleDrive
         return view('employee.file_processing.form-file-decryption',compact('user'));
     }
 
-    public function process_DownloadFileDecryption($filename){
-        // dd($file);
+    public function process_DownloadFileDecryption(Request $request){
+        $this->validate($request, [
+            'filename'=>'required',
+            'kunci'=>'required|size:32'
+        ]);
         $decryption = new Encryption();
-        $file = Storage::disk('frandrive')->get($filename);
-        $message = $decryption->Decrypt_AES($file);
+        $file = Storage::disk('frandrive')->get($request->filename);
+        $message = $decryption->Decrypt_AES($file,$request->kunci);
+        $filename = substr($request->filename,0,-5);
         
         return response()->make($message, 200, [
             'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
@@ -75,10 +79,11 @@ class FileProcessing extends SimpleDrive
             ]);
         $file = $request->file;
         $message = $decryption->decrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
-        if (!$message) return redirect(url()->previous())->with('error','Harap cek file');
+        if (!$message || (substr($file->getClientOriginalName(),-5) !== '.gmdp')) return redirect(url()->previous())->with('error','Harap cek file');
+        $filename = substr($file->getClientOriginalName(),0,-5);
         return response()->make($message, 200, [
             'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
-            'Content-Disposition' => 'attachment; filename="' . pathinfo($file->getClientOriginalName(), PATHINFO_BASENAME) . '"'
+            'Content-Disposition' => 'attachment; filename="' . pathinfo($filename, PATHINFO_BASENAME) . '"'
         ]);
 
     }

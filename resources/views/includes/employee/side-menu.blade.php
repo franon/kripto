@@ -37,22 +37,22 @@
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.file.encrypt') }}">Enkripsi File</a></li>
               <li><a href="{{ route('employee.file.decrypt') }}">Dekripsi File</a></li>
-              <li><a href="{{ route('employee.file.sign') }}">Tanda Tangan File</a></li>
+              {{-- <li><a href="{{ route('employee.file.sign') }}">Tanda Tangan File</a></li>
               <li><a href="{{ route('employee.file.verify') }}">Verifikasi Tanda Tangan</a></li>
-              <li><a href="{{ route('employee.file.multisec') }}">Multi Pengamanan File</a></li>
+              <li><a href="{{ route('employee.file.multisec') }}">Multi Pengamanan File</a></li> --}}
             </ul>
           </li>
-          <li><a><i class="fa fa-table"></i> Tagihan <span class="fa fa-chevron-down"></span></a>
+          {{-- <li><a><i class="fa fa-table"></i> Tagihan <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.daftar.klien') }}">Daftar Pelanggan</a></li>
               <li><a href="{{ route('employee.daftar.klien.tagihan') }}">Tagihan Pelanggan</a></li>
             </ul>
-          </li>
-          <li><a><i class="fa fa-key"></i> Pengolahan Kunci <span class="fa fa-chevron-down"></span></a>
+          </li> --}}
+          {{-- <li><a><i class="fa fa-key"></i> Pengolahan Kunci <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="tables.html">Atur kunci saya</a></li>
             </ul>
-          </li>
+          </li> --}}
           <li><a><i class="fa fa-user-secret" aria-hidden="true"></i> Internal <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.internal.paket_internet') }}">Daftar Paket</a></li>

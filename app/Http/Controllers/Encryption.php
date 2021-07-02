@@ -9,6 +9,36 @@ use Exception;
 
 class Encryption extends Controller
 {
+
+    public function testing(){
+        $res = [];
+        for ($i = 0; $i < 256; $i++) {
+            $mulVal2 = $i << 1;
+            if ($i & 0x80) {
+                $res[$i] = $mulVal2 & 0xff ^ 0x1b; //{02}
+                // $res[$i] = $i ^ $res[$i]; // {03}
+            }else{
+                $res[$i] = $mulVal2 & 0xff ;// {02}
+                // $res[$i] = $i ^ $res[$i]; // {03}
+            }
+        }
+        echo '<br/>';
+        // print_r(array_map("dechex",$res));die;
+        $arr2d = [];
+        for ($i = 0; $i < 16; $i++) {
+            for ($j = 0; $j < 16; $j++) {
+                $arr2d[$i][$j] = $res[$i*16+$j];
+            }
+        }
+
+        for ($i = 0; $i < 16; $i++) {
+            for ($j = 0; $j < 16; $j++) {
+                echo dechex($arr2d[$i][$j]).' | ';
+            }
+            echo "<br/>";
+        }
+    }
+
     public function cobaenkrip_256($message=false){
         // echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         $message = 'shockdartpesan01';
