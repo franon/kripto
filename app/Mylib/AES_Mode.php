@@ -13,18 +13,17 @@ class AES_Mode extends AES_Encryption
         for ($i=0; $i < $n; $i++) { 
             $index = 16*$i;
             $blockMessage = substr($message, $index,16);
-            $starttime = microtime(true);
+            // $starttime = microtime(true);
             $temp = AES_Encryption::encrypt($blockMessage,$word);
-            echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
+            // echo 'Blocking time: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
             $cipher .= $temp;
         }
-        return base64_encode($cipher);
+        return $cipher;
     }
 
     //! Menangani pembagian block
     public function Pure_Decrypt($cipher,$key){
-        $cipher = base64_decode($cipher);
-        $n = strlen($cipher)/16;
+        $n = strlen($cipher)/16;if(!is_int($n)) return false;
         $message = "";
         $word = $this->keyExpansion($this->keyDec($key));
 
@@ -54,11 +53,11 @@ class AES_Mode extends AES_Encryption
         }
         // dd($cipher);
         // die;
-        return base64_encode($cipher);
+        return $cipher;
     }
     
     public function CBC_Decrypt($cipher, $key, $iv){
-        $cipher = base64_decode($cipher);
+        // $cipher = base64_decode($cipher);
         $n = strlen($cipher)/16;if(!is_int($n)) return false;
         $message = "";
         $word = $this->keyExpansion($this->keyDec($key));

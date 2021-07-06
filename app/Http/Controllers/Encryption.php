@@ -59,6 +59,7 @@ class Encryption extends Controller
         // return $cipher;
 
     }
+
     public function cobaenkrip_RSA(RsaEncryption $rsa){
         $message = 'shockdartpesan01';
         $key = 'kuncifran!@#$%10';
@@ -72,16 +73,35 @@ class Encryption extends Controller
         // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
         // dd(microtime(true)-$starttime);
-        return $iv.$cipher;
+        return base64_encode($iv.$cipher);
     }
 
     public function decrypt_AES($cipher,$key){
         $message = '';
+        $cipher = base64_decode($cipher);
         // $iv = 'c0~JO&HN+~!!zMyh';
         $iv = substr($cipher,0,16);
         $cipher = substr($cipher,16);
         $aes = new AES_Mode();
         $message = $aes->CBC_Decrypt($cipher,$key,$iv);
+        return $message;
+    }
+
+    public function encrypt_AES_Debug($message, $key){
+        $aes = new AES_Mode();
+        // $starttime = microtime(true);
+        $cipher = $aes->Pure_Encrypt($message,$key);
+        // dd(microtime(true)-$starttime);
+        return base64_encode($cipher);
+    }
+
+    public function decrypt_AES_Debug($cipher,$key){
+        $message = '';
+        $cipher = base64_decode($cipher);
+
+        $aes = new AES_Mode();
+        $message = $aes->Pure_Decrypt($cipher,$key);
+        
         return $message;
     }
 

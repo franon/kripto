@@ -71,23 +71,4 @@ class SimpleDrive extends CustomController
         $file = FileProcessing::where('file_jalurutuh',$path)->delete();
         return redirect()->back();
     }
-
-    // public function process_DownloadFileDecryption($path){
-    //     $decryption = new Encryption();
-
-    //     $file = Storage::disk('frandrive')->get($path);
-    //     // $starttime = microtime(true);
-    //     $message = $decryption->Decrypt_AES($file);
-    //     // dd(microtime(true)-$starttime);
-        
-    //     return response()->make($message, 200, [
-    //         'Content-Type' => (new finfo(FILEINFO_MIME))->buffer($message),
-    //         'Content-Disposition' => 'attachment; filename="' . pathinfo($path, PATHINFO_BASENAME) . '"'
-    //     ]);
-    // }
-
-    public function createFolder(){
-
-    }
-
 }

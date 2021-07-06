@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Encryption;
 use App\Models\Direktori;
+use App\Models\FileProcessing as ModelsFileProcessing;
 use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,13 @@ class FileProcessing extends SimpleDrive
         $file = $request->file; $filename = $file->getClientOriginalName().'.gmdp';
         $directory = $request->direktori == null ? Direktori::firstWhere('dir_jalur', 'encrypted/') : Direktori::firstWhere('dir_jalur', $request->direktori);
         $path = $directory->dir_jalur.$filename;
+        while(true){
+            $check = ModelsFileProcessing::where('file_jalur',$path)->first();
+            if($check === null) break;
+            $filename = substr(pathinfo($check->file_nama,PATHINFO_FILENAME),0,-(strlen($check->file_tipe)+1)).'_cp.'.$check->file_tipe.'.gmdp';
+            $path = $directory->dir_jalur.$filename;
+        }
+        // dd($path,$filename);
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
         $this->uploadFiles($path, $encrypted);
