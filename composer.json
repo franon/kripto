@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.5",
         "setasign/fpdi": "^2.3",
         "smalot/pdfparser": "^1.0",
+        "spatie/flysystem-dropbox": "1.2.3",
         "tecnickcom/tcpdf": "^6.4"
     },
     "require-dev": {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Employee\DigitalSignature;
 use App\Http\Controllers\Employee\Drive\SimpleDrive;
 use App\Http\Controllers\Employee\Drive\FileProcessing;
+use App\Http\Controllers\Employee\Drive\KriptoDrive;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Employee\internal\DaftarPaket;
 use App\Http\Controllers\Employee\internal\Direktori;
@@ -50,8 +51,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('drive', [SimpleDrive::class, 'showDirectory'])->name('drive');
         Route::get('drive/{directory}', [SimpleDrive::class, 'showFiles'])->name('drive.directory');
-        Route::get('drive/download/{penentu}/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
+        Route::get('drive/download/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
         Route::get('drive/remove/{filename}', [SimpleDrive::class, 'removeFiles'])->name('drive.file.remove');
+
+        Route::get('kriptodrive', [KriptoDrive::class, 'index'])->name('kriptodrive');
 
         Route::prefix('file')->name('file.')->group(function(){
             Route::get('encrypt', [FileProcessing::class, 'show_FileEncryption'])->name('encrypt');

@@ -16,8 +16,6 @@ class FileProcessing extends SimpleDrive
 {
     
     public function show_FileEncryption(){
-        // $clientIP = \Request::getClientIp(true); dd($clientIP);
-        // dd(storage_path('app/encryptstorage'),Storage::disk('frandrive'));
         $user = $this->sanitizeUser(Auth::user()); 
         return view('employee.file_processing.form-file-encryption',compact('user'));
     }
@@ -42,6 +40,7 @@ class FileProcessing extends SimpleDrive
         $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
         $this->uploadFiles($path, $encrypted);
+
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
@@ -70,7 +69,8 @@ class FileProcessing extends SimpleDrive
             'kunci'=>'required|size:32'
         ]);
         $decryption = new Encryption();
-        $file = Storage::disk('frandrive')->get($request->filename);
+        // $file = Storage::disk('dropbox')->get('/'.$request->filename);
+        $file = Storage::disk('dropbox')->get($request->filename);
         $message = $decryption->Decrypt_AES($file,$request->kunci);
         $filename = substr($request->filename,0,-5);
         

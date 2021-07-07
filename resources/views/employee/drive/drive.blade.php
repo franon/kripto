@@ -91,9 +91,9 @@
                         <div class="file-man-box"><a href="{{route('employee.drive.file.remove',[base64_encode($file->file_jalurutuh)])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
                             <div class="file-img-box"><img src="{{ asset('images/file_icons/'.pathinfo($file->file_nama,PATHINFO_EXTENSION).'.svg') }}" alt="icon"></div>
                             {{-- <a href="{{route('employee.file.decrypt.download',[$file->file_nama])}}" class="file-download"><i class="fa fa-download"></i></a> --}}
-                            <a href="{{route('employee.drive.file.download',[$penentu,base64_encode($file->file_jalur)])}}" class="file-download"><i class="fa fa-download"></i></a>
+                            <a href="{{route('employee.drive.file.download',[base64_encode($file->file_jalur)])}}" class="file-download"><i class="fa fa-download"></i></a>
                             @if ($penentu === "encrypted")
-                            <a href="#decryptFile" class="file-unlock" data-toggle="modal" data-target="#decryptFile" data-file="{{$file->file_jalur.$file->file_nama}}"><i class="fa fa-unlock"></i></a>  
+                            <a href="#decryptFile" class="file-unlock" data-toggle="modal" data-target="#decryptFile" data-file="{{$file->file_jalur}}"><i class="fa fa-unlock"></i></a>  
                             @endif
                             <div class="file-man-title">
                               @if (empty($file->file_alias))

@@ -34,6 +34,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/encryptstorage'),
         ],
+        'dropbox' => [
+            'driver' => 'dropbox',
+            'authorizationToken' => env('DROPBOX_TOKEN')
+        ],
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

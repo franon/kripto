@@ -44,21 +44,15 @@ class SimpleDrive extends CustomController
     }
 
     public function uploadFiles($path,$content){
-        // return Storage::disk('frandrive')->putFileAs($directory, $content, $filename);
-        return Storage::disk('frandrive')->put($path, $content);
+        Storage::disk('dropbox')->put($path,$content);
+        // Storage::disk('frandrive')->put($path, $content);
     }
 
-    public function downloadFiles($penentu,$path){
-        switch ($penentu) {
-            case 'encrypted':
-                // return $this->process_DownloadFileDecryption(base64_decode($path));
-                return Storage::disk('frandrive')->download(base64_decode($path));
-                break;
-            case 'signed':
-                return Storage::disk('frandrive')->download(base64_decode($path));
-            default:
-                abort(404);
-        }
+    public function downloadFiles($path){
+        return Storage::disk('dropbox')->download(base64_decode($path));
+        // return Storage::disk('frandrive')->download(base64_decode($path));
+        abort(404);
+        // return $this->process_DownloadFileDecryption(base64_decode($path));
     }
 
     public function streamFiles($path){
@@ -67,7 +61,8 @@ class SimpleDrive extends CustomController
 
     public function removeFiles($path){
         $path = \base64_decode($path);
-        Storage::disk('frandrive')->delete($path);
+        Storage::disk('dropbox')->delete($path);
+        // Storage::disk('frandrive')->delete($path);
         $file = FileProcessing::where('file_jalurutuh',$path)->delete();
         return redirect()->back();
     }

@@ -166,6 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
+        App\Providers\DropboxServiceProvider::class,
 
         /*
          * Application Service Providers...
