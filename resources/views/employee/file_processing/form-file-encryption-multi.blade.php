@@ -22,72 +22,52 @@
 @endpush
 
 @section('content')
-<div class="">
-    <div class="page-title">
-        <div class="title_left"><h3>Form Unggah</h3></div>
-        <div class="title_right">
-          <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search for...">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
-              </span>
-            </div>
-          </div>
-        </div>
+<div class="col-md-12 col-sm-12">
+  <div class="x_panel">
+    <div class="x_title">
+      <h2 style="float: left;"><b>Unggah File</b></h2>
+      <div class="clearfix"></div>
     </div>
-    
-    <div class="clear-fix"></div>
-
-    <div class="row">
-        <div class="col-md-12 col-sm-12  ">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>Unggah File</h2>
-              <div class="clearfix"></div>
+    <div class="x_content">
+      <p>Unggah File yang akan di enkripsi</p>
+      @if (count($errors)>0)
+            <div class="alert alert-danger">
+                @foreach ($errors->all() as $error)
+                    {{ $error }} <br/>
+                @endforeach
             </div>
-            <div class="x_content">
-              <p>Unggah File yang akan di enkripsi</p>
-              @if (count($errors)>0)
-                    <div class="alert alert-danger">
-                        @foreach ($errors->all() as $error)
-                            {{ $error }} <br/>
-                        @endforeach
-                    </div>
-                @endif
-                <form id="encrypt-file" action="{{route('employee.file.encrypt.upload')}}" method="post" enctype="multipart/form-data">
-                    @csrf
+        @endif
+        <form id="encrypt-file" action="{{route('employee.file.encrypt.upload')}}" method="post" enctype="multipart/form-data">
+            @csrf
 
-                  <div class="form-group">
-                      <label for="kunci"><b>Kunci</b></label>
-                      <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/>
-                  </div>
-
-                    {{-- <div class="form-group"> --}}
-                      {{-- <div id="dropzoneDragArea" class="dz-default dz-message dropzoneDragArea"> --}}
-                        {{-- <label for="file"><h2>File</h2></label> --}}
-                        {{-- <span> Upload File </span> --}}
-                        {{-- <input type="file" name="file" class="form-control-file" id="file"/> --}}
-                      {{-- </div> --}}
-                      {{-- <div class="dropzone-previews"></div> --}}
-                    {{-- </div> --}}
-
-                    <div class="form-group">
-                      <div class="dropzone" id="myDropzone"></div>
-                    </div>
-
-                    <div class="form-group">
-                      <button type="submit" id="submit-all" value="submit" class="btn btn-primary">Enkrip</button>
-                    </div>
-                </form>
-              <br />
-              <br />
-              <br />
-              <br />
-            </div>
+          <div class="form-group">
+              <label for="kunci"><b>Kunci</b></label>
+              <input type="text" name="kunci" class="form-control" id="kunci" minlength="32" maxlength="32"/>
           </div>
-        </div>
+
+            {{-- <div class="form-group"> --}}
+              {{-- <div id="dropzoneDragArea" class="dz-default dz-message dropzoneDragArea"> --}}
+                {{-- <label for="file"><h2>File</h2></label> --}}
+                {{-- <span> Upload File </span> --}}
+                {{-- <input type="file" name="file" class="form-control-file" id="file"/> --}}
+              {{-- </div> --}}
+              {{-- <div class="dropzone-previews"></div> --}}
+            {{-- </div> --}}
+
+            <div class="form-group">
+              <div class="dropzone" id="myDropzone"></div>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" id="submit-all" value="submit" class="btn btn-primary btn-lg btn-block">Enkrip</button>
+            </div>
+        </form>
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
+  </div>
 </div>
 @endsection
 
