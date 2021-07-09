@@ -20,7 +20,7 @@
     <!-- JQVMap -->
     {{-- <link rel="stylesheet" href=" {{asset('vendor/jqvmap/dist/jqvmap.min.css')}} "> --}}
     <!-- bootstrap-daterangepicker -->
-    {{-- <link rel="stylesheet" href=" {{asset('vendor/bootstrap-daterangepicker/daterangepicker.css')}} "> --}}
+    <link rel="stylesheet" href=" {{asset('vendor/bootstrap-daterangepicker/daterangepicker.css')}} ">
 
     <!-- Custom Theme Style -->
     <link rel="stylesheet" href=" {{asset('template/gentelella/build/css/custom.min.css')}} ">
