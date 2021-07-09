@@ -73,6 +73,7 @@ class Encryption extends Controller
         // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);
         // dd(microtime(true)-$starttime);
+        // return $iv.$cipher;
         return base64_encode($iv.$cipher);
     }
 

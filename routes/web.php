@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('file')->name('file.')->group(function(){
             Route::get('encrypt', [FileProcessing::class, 'show_FileEncryption'])->name('encrypt');
+            Route::get('encrypt/multi', [FileProcessing::class, 'show_FileEncryptionMulti'])->name('encrypt.multi');
             Route::post('encrypt/upload', [FileProcessing::class, 'process_FileEncryption'])->name('encrypt.upload');
             Route::get('decrypt', [FileProcessing::class, 'show_FileDecryption'])->name('decrypt');
             Route::post('decrypt/upload', [FileProcessing::class, 'process_FileDecryption'])->name('decrypt.upload');

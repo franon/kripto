@@ -44,7 +44,7 @@
                 <div class="dropdown-menu">
                   {{-- <a class="dropdown-item" href="{{ route('employee.file.encrypt') }}">Enkripsi File</a> --}}
                   <a href="#encryptFile" class="dropdown-item" data-toggle="modal" data-target="#encryptFile">Enkripsi File</a>  
-                  <a class="dropdown-item" href="{{ route('employee.file.sign') }}">Tanda Tangan File</a>
+                  {{-- <a class="dropdown-item" href="{{ route('employee.file.sign') }}">Tanda Tangan File</a> --}}
                 </div>
               </div>
               |
@@ -183,7 +183,7 @@
           <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="file"><h2>File</h2></label>
             <div class="col-md-6 col-sm-6 ">
-              <input type="file" name="file" class="form-control-file" id="file"/ required>
+              <input type="file" name="file[]" class="form-control-file" id="file"/ multiple required>
             </div>
           </div>
           <div class="item form-group">

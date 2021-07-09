@@ -20,40 +20,50 @@ class FileProcessing extends SimpleDrive
         return view('employee.file_processing.form-file-encryption',compact('user'));
     }
 
-    public function process_FileEncryption(Request $request){
+    public function show_FileEncryptionMulti(){
         $user = $this->sanitizeUser(Auth::user()); 
+        return view('employee.file_processing.form-file-encryption-multi',compact('user'));
+    }
+
+    public function process_FileEncryption(Request $request){
+        $user = $this->sanitizeUser(Auth::user());
         $encryption = new Encryption();
+        // dd($request->all(),$request->kunci);
         $this->validate($request, [
-            'file'=>'required|file|max:10240',
+            'file.*'=>'required|file|max:10240',
             'kunci'=>'required|size:32'
             ]);
-        $file = $request->file; $filename = $file->getClientOriginalName().'.gmdp';
-        $directory = $request->direktori == null ? Direktori::firstWhere('dir_jalur', 'encrypted/') : Direktori::firstWhere('dir_jalur', $request->direktori);
-        $path = $directory->dir_jalur.$filename;
-        while(true){
-            $check = ModelsFileProcessing::where('file_jalur',$path)->first();
-            if($check === null) break;
-            $filename = substr(pathinfo($check->file_nama,PATHINFO_FILENAME),0,-(strlen($check->file_tipe)+1)).'_cp.'.$check->file_tipe.'.gmdp';
+        foreach ($request->file as $file) {
+            // $file = $request->file;
+            $filename = $file->getClientOriginalName().'.gmdp';
+            $directory = $request->direktori == null ? Direktori::firstWhere('dir_jalur', 'encrypted/') : Direktori::firstWhere('dir_jalur', $request->direktori);
             $path = $directory->dir_jalur.$filename;
-        }
+
+            while(true){
+                $check = ModelsFileProcessing::where('file_jalur',$path)->first();
+                if($check === null) break;
+                $filename = substr(pathinfo($check->file_nama,PATHINFO_FILENAME),0,-(strlen($check->file_tipe)+1)).'_cp.'.$check->file_tipe.'.gmdp';
+                $path = $directory->dir_jalur.$filename;
+            }
         // dd($path,$filename);
-        $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
+            $encrypted = $encryption->encrypt_AES($this->fileHandler('open',$file->path()), $request->kunci);
 
-        $this->uploadFiles($path, $encrypted);
+            $this->uploadFiles($path, $encrypted);
 
-        $directory->file()->create([
-            'file_id'=>'file-'.sha1(md5(microtime(true))),
-            'file_nama'=>$filename,
-            'file_alias'=>$filename,
-            'file_tipe'=>$file->getClientOriginalExtension(),
-            'file_jalur'=>$path,
-            'file_jalurutuh'=>$path,
-            'file_ukuran'=>$file->getSize(),
-            'p_id'=>$user->p_id,
-            'pembuat'=>$user->p_namapengguna,
-            'tanggal_buat'=>date('Y-m-d'),
-            'dir_nama'=>$directory->dir_nama
-        ]);
+            $directory->file()->create([
+                'file_id'=>'file-'.sha1(md5(microtime(true))),
+                'file_nama'=>$filename,
+                'file_alias'=>$filename,
+                'file_tipe'=>$file->getClientOriginalExtension(),
+                'file_jalur'=>$path,
+                'file_jalurutuh'=>$path,
+                'file_ukuran'=>$file->getSize(),
+                'p_id'=>$user->p_id,
+                'pembuat'=>$user->p_namapengguna,
+                'tanggal_buat'=>date('Y-m-d'),
+                'dir_nama'=>$directory->dir_nama
+            ]);
+        }
 
         return redirect()->route('employee.drive');
     }
@@ -69,8 +79,8 @@ class FileProcessing extends SimpleDrive
             'kunci'=>'required|size:32'
         ]);
         $decryption = new Encryption();
-        // $file = Storage::disk('dropbox')->get('/'.$request->filename);
         $file = Storage::disk('dropbox')->get($request->filename);
+        // $file = Storage::disk('frandrive')->get($request->filename);
         $message = $decryption->Decrypt_AES($file,$request->kunci);
         $filename = substr($request->filename,0,-5);
         

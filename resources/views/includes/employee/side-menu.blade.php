@@ -37,6 +37,7 @@
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.file.encrypt') }}">Enkripsi File</a></li>
               <li><a href="{{ route('employee.file.decrypt') }}">Dekripsi File</a></li>
+              <li><a href="{{ route('employee.file.encrypt.multi') }}">Enkripsi Multi File</a></li>
               {{-- <li><a href="{{ route('employee.file.sign') }}">Tanda Tangan File</a></li>
               <li><a href="{{ route('employee.file.verify') }}">Verifikasi Tanda Tangan</a></li>
               <li><a href="{{ route('employee.file.multisec') }}">Multi Pengamanan File</a></li> --}}
