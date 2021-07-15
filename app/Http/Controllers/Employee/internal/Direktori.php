@@ -34,7 +34,7 @@ class Direktori extends CustomController
             'dir_id'=>'dir-'.sha1(md5(microtime(true))),
             'p_id'=>$user->p_id,
             'dir_nama'=>$request->dir_nama,
-            'dir_jalur'=>$request->dir_parent.trim($request->dir_nama).'/',
+            'dir_jalur'=>$request->dir_parent.str_replace(' ','',$request->dir_nama).'/',
             'dir_didalam'=>$request->dir_parent,
             'pembuat'=>$user->p_namapengguna,
             'tanggal_buat'=>date('Y-m-d')

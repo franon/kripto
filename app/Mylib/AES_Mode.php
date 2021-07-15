@@ -50,7 +50,7 @@ class AES_Mode extends AES_Encryption
             // dd(array_map('dechex',str_split(substr($message,$index,16)),1),$iv);
             $temp = $this->strxor(substr($message,$index,16),$iv);
             // $starttime = \microtime(true);
-            $iv = AES_Encryption::encrwypt($temp, $word);
+            $iv = AES_Encryption::encrypt($temp, $word);
             // echo 'Enc /16b: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
             $cipher .= $iv;
         }
