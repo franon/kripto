@@ -187,7 +187,7 @@ class AES_Encryption
 
     public function subBytes($state){
         for ($r=0; $r < 4; $r++) { 
-            for ($c=0; $c < 4; $c++) { 
+            for ($c=0; $c < 4; $c++) {
                 $state[$r][$c] = self::$sBox[$state[$r][$c]];
             }
         }
@@ -252,11 +252,6 @@ class AES_Encryption
 
     //* xor roundKey into State (S)
     public function addRoundKey($state, $word, $Nr){
-        // for ($r=0; $r < 4; $r++) {
-        //     for ($c=0; $c < 4; $c++) {
-        //         $state[$r][$c] ^= $word[$Nr*4 + $c][$r];
-        //     }
-        // }
         for ($c=0; $c < 4; $c++) {
             for ($r=0; $r < 4; $r++) $state[$r][$c] ^= $word[$Nr*4+$c][$r];
         }
@@ -265,7 +260,7 @@ class AES_Encryption
 
     public function keyExpansion($key){
         // dd(count($key));
-        //* take 4 word(16byte) key dan produce linear array of 44/64 words(176 byte/256byte)
+        //* take 4 word(16byte) key dan produce linear array of 44/60 words(176 byte/256byte)
         $Nk = 8; //* in words. 8/32/256. 
         $Nr = $Nk + 6; 
         $word= []; $temp = [];
@@ -288,7 +283,7 @@ class AES_Encryption
             elseif($Nk>6 && $i%$Nk == 4){
                 $temp = $this->subWord($temp);
             }
-            //* jika bukan kelipatan 8
+            
             for ($t=0; $t < 4; $t++) { 
                 $word[$i][$t] = $word[$i-$Nk][$t] ^ $temp[$t]; //* w[i] = w[i-$Nk] ⊕ temp || w[9][0..4] = w[5][0..4] ⊕ w[8][0..4]
             }
@@ -381,7 +376,7 @@ class AES_Encryption
         //* Initial Round
         $state = $this->addRoundKey($state, $word, 0);
 
-        //* Round 1-9
+        //* Round 1-13
         for ($i=1; $i < $Nr; $i++) { //? rou
             $state = $this->subBytes($state);
 
@@ -391,7 +386,7 @@ class AES_Encryption
 
             $state = $this->addRoundKey($state, $word, $i);
         }
-        //* Final Round 10
+        //* Final Round 14
         $state = $this->subBytes($state);
 
         $state = $this->shiftRows($state);
@@ -407,17 +402,22 @@ class AES_Encryption
         $Nr = 14;
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
         //! ROUND 
+        //* Initial Round
         $state = $this->addRoundKey($state,$word, $Nr);
 
+        //* Round 13-1
         for ($i=$Nr-1; $i>0; $i--) { 
             $state = $this->shiftRows_INV($state);
             $state = $this->subBytes_INV($state);
             $state = $this->addRoundKey($state,$word, $i);
             $state = $this->mixColumn_Table_INV($state);
         }
+
+        //* Final Round 0
         $state = $this->shiftRows_INV($state);
         $state = $this->subBytes_INV($state);
         $state = $this->addRoundKey($state,$word, 0);
+        
         $state = $this->state2Plaintext($this->convertTo('char',$state));
 
         return $state;

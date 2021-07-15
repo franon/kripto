@@ -50,9 +50,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
         
-        return \redirect('/employee/dashboard');
+        return \redirect('/login');
+        // return \redirect('/employee/dashboard');
         // return redirect(RouteServiceProvider::HOME);
     }
 }

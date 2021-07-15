@@ -24,6 +24,13 @@ class SimpleDrive extends CustomController
         return view('employee.drive.drive', compact('user','directory'));
     }
 
+    public function showFilesPersonal(){
+        $user = $this->sanitizeUser(Auth::user());
+        // $directory =  Storage::disk('frandrive')->directories();
+        $files = FileProcessing::where('pembuat',$user->p_namapengguna)->get();
+        return view('employee.drive.drive-personal', compact('user','files'));
+    }
+
     public function showFiles($currentDirectory){
         $currentDirectory = base64_decode($currentDirectory);
         // return Storage::makeDirectory($currentDirectory.'testing');

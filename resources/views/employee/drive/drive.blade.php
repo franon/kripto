@@ -69,7 +69,10 @@
           @foreach ($files as $file)
           @php $penentu = explode('/',$file->file_jalur)[0]; @endphp
             <div class="col-lg-3 col-xl-2">
-                <div class="file-man-box"><a href="{{route('employee.drive.file.remove',[base64_encode($file->file_jalurutuh)])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
+                <div class="file-man-box">
+                  @if ($user->p_namapengguna == $file->pembuat)
+                  <a href="{{route('employee.drive.file.remove',[base64_encode($file->file_jalurutuh)])}}" class="file-close"><i class="fa fa-times-circle"></i></a>
+                  @endif
                     <div class="file-img-box"><img src="{{ asset('images/file_icons/'.pathinfo($file->file_nama,PATHINFO_EXTENSION).'.svg') }}" alt="icon"></div>
                     {{-- <a href="{{route('employee.file.decrypt.download',[$file->file_nama])}}" class="file-download"><i class="fa fa-download"></i></a> --}}
                     <a href="{{route('employee.drive.file.download',[base64_encode($file->file_jalur)])}}" class="file-download"><i class="fa fa-download"></i></a>

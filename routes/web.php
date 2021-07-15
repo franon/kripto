@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dashboard',[EmployeeController::class,'index'])->name('dashboard');
 
         Route::get('drive', [SimpleDrive::class, 'showDirectory'])->name('drive');
+        Route::get('drive/personal', [SimpleDrive::class, 'showFilesPersonal'])->name('drive.personal');
         Route::get('drive/{directory}', [SimpleDrive::class, 'showFiles'])->name('drive.directory');
         Route::get('drive/download/{filename}', [SimpleDrive::class, 'downloadFiles'])->name('drive.file.download');
         Route::get('drive/remove/{filename}', [SimpleDrive::class, 'removeFiles'])->name('drive.file.remove');

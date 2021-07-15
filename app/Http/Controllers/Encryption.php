@@ -69,6 +69,7 @@ class Encryption extends Controller
     public function encrypt_AES($message, $key){
         // $iv = 'c0~JO&HN+~!!zMyh';
         $iv = random_bytes(16);
+        // $iv = 'c0~JO&HN+~!!zMyh';
         $aes = new AES_Mode();
         // $starttime = microtime(true);
         $cipher = $aes->CBC_Encrypt($message,$key,$iv);

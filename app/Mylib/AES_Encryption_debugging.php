@@ -418,21 +418,21 @@ class AES_Encryption_debugging
     public function encrypt($message, $word){
         $Nr = 14;
         // $starttime = \microtime(true);
+        // dd($message);
         $state = $this->plaintext2State($this->convertTo('dec',$message)); //* 2D array
-        // var_dump($state);die;
-        // $this->php('Plaintext',$this->convertTo('hex',$state));
+        $this->debugState('P2s-1',$this->convertTo('hex',$state),0);
         // echo 'p2s: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
         // dd($state,$word[0*4+0],$word[0*4+1],$word[0*4+2],$word[0*4+3]);
 
-        // \json_encode($this->php('Word',$this->toHex($word)));
+        // \json_encode($this->debugState('Word',$this->toHex($word)));
 
         //* Initial Round
         // $starttime = \microtime(true);
         $state = $this->addRoundKey($state, $word, 0); //! Assign
         // $this->addRoundKey($state, $word, 0);
         // echo 'addr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
-        // $this->php('addRoundKey',$this->convertTo('hex',$state),0);
+        $this->debugState('addRoundKey',$this->convertTo('hex',$state),0);
 
         //* Round 1-13
         for ($i=1; $i < $Nr; $i++) { //? rou
@@ -441,64 +441,75 @@ class AES_Encryption_debugging
             // echo $state;
             
             // $this->subBytes($state);
-            // $this->php('SubBytes',$this->convertTo('hex',$state),$i);
+            $this->debugState('SubBytes',$this->convertTo('hex',$state),$i);
             // echo 'sb: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
             // $starttime = \microtime(true);
             $state = $this->shiftRows($state); //! Assign
             // $this->shiftRows($state);
-            // $this->php('ShiftRows',$this->convertTo('hex',$state),$i);
+            $this->debugState('ShiftRows',$this->convertTo('hex',$state),$i);
             // echo 'sr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
             // $starttime = \microtime(true);
             $state = $this->mixColumn_Table($state); //! Assign
             // $this->mixColumn_Table($state);
-            // $this->php('MixColumn',$this->convertTo('hex',$state),$i);
+            $this->debugState('MixColumn',$this->convertTo('hex',$state),$i);
             // echo 'mc: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
             // $starttime = \microtime(true);
             $state = $this->addRoundKey($state, $word, $i); //! Assign
             // $this->addRoundKey($state, $word, $i);
-            // $this->php('AddRoundKey',$this->convertTo('hex',$state),$i);
+            $this->debugState('AddRoundKey',$this->convertTo('hex',$state),$i);
             // echo 'addr: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
         }
         //* Final Round 14
         $state = $this->subBytes($state); //! Assign
         // $this->subBytes($state);
-        // $this->php('SubBytes',$this->convertTo('hex',$state),$Nr);
+        $this->debugState('SubBytes',$this->convertTo('hex',$state),$Nr);
 
         $state = $this->shiftRows($state); //! Assign
         // $this->shiftRows($state);
-        // $this->php('ShiftRows',$this->convertTo('hex',$state),$Nr);
+        $this->debugState('ShiftRows',$this->convertTo('hex',$state),$Nr);
 
         $state = $this->addRoundKey($state, $word, $Nr); //? round 14 //! Assign
         // $this->addRoundKey($state, $word, $Nr);
-        // $this->php('AddRoundKey',$this->convertTo('hex',$state),$Nr);
+        $this->debugState('AddRoundKey',$this->convertTo('hex',$state),$Nr);
         
         // $starttime = \microtime(true);
         $state = $this->state2Plaintext($this->convertTo('char',$state));
         // echo 's2p: '. sprintf('%f (s)', \microtime(true)-$starttime).'<br>';
 
+        die;
         return $state; //* return 16Byte Cipherteks
     }
 
     public function decrypt($cipher, $word){
         $Nr = 14;
         $state = $this->plaintext2State($this->convertTo('dec', $cipher));
+        $this->debugState('P2s-1',$this->convertTo('hex',$state),$Nr);
         //! ROUND 
-        $state = $this->addRoundKey($state,$word, $Nr);
+        $state = $this->addRoundKey($state,$word, $Nr+0);
+        $this->debugState('AddRoundKey',$this->convertTo('hex',$state),$Nr+0);
 
-        for ($i=$Nr-1; $i>0; $i--) { 
+        for ($i=1; $i<$Nr; $i++) { 
             $state = $this->shiftRows_INV($state);
+            $this->debugState('InvShfRow',$this->convertTo('hex',$state),$Nr-$i);
             $state = $this->subBytes_INV($state);
-            $state = $this->addRoundKey($state,$word, $i);
+            $this->debugState('InvSbbytes',$this->convertTo('hex',$state),$Nr-$i);
+            $state = $this->addRoundKey($state,$word, $Nr-$i);
+            $this->debugState('AddRoundKey',$this->convertTo('hex',$state),$Nr-$i);
             $state = $this->mixColumn_Table_INV($state);
+            $this->debugState('InvMxColmn',$this->convertTo('hex',$state),$Nr-$i);
         }
         $state = $this->shiftRows_INV($state);
+        $this->debugState('InvShfRow',$this->convertTo('hex',$state),0);
         $state = $this->subBytes_INV($state);
-        $state = $this->addRoundKey($state,$word, 0);
+        $this->debugState('InvSbbytes',$this->convertTo('hex',$state),0);
+        $state = $this->addRoundKey($state,$word, $Nr-$Nr);
+        $this->debugState('AddRoundKey',$this->convertTo('hex',$state),$Nr-$Nr);
         $state = $this->state2Plaintext($this->convertTo('char',$state));
 
+        die;
         return $state;
 
     }

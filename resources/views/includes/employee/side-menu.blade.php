@@ -30,6 +30,7 @@
           <li><a><i class="fa fa-hdd-o" ></i> Penyimpanan File <span class="fa fa-chevron-down"></span></a>
             <ul class="nav child_menu">
               <li><a href="{{ route('employee.drive') }}">Lihat File</a></li>
+              <li><a href="{{ route('employee.drive.personal') }}">Lihat File Saya</a></li>
               <li><a href="form_advanced.html">Upload File</a></li>
             </ul>
           </li>

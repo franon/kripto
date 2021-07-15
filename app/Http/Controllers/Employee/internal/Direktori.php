@@ -40,7 +40,7 @@ class Direktori extends CustomController
             'tanggal_buat'=>date('Y-m-d')
         ]);
 
-        Storage::disk('frandrive')->makeDirectory($request->dir_jalur);
+        Storage::disk('dropbox')->makeDirectory($request->dir_jalur);
 
         return redirect()->route('employee.internal.direktori');
     }
