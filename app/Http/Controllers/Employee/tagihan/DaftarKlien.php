@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use TCPDF;
 use App\Mylib\customPDF;
 use Hamcrest\Type\IsObject;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
@@ -29,7 +30,6 @@ class DaftarKlien extends CustomController
       $user = $this->sanitizeUser(Auth::user());
       $klien = Klien::with('paket_internet')->find($k_id);
       $paket_internet = Paket_Internet::all();
-      // dd($klien->k_id);
       // return ($klien);
       return view('employee.tagihan.detail-klien',compact('user','klien','paket_internet'));
   }
@@ -90,7 +90,7 @@ class DaftarKlien extends CustomController
       return back();
   }
 
-    public function showDaftarKlienTagihan(){
+    public function showDaftarTagihanSemuaKlien(){
         $user = $this->sanitizeUser(Auth::user()); 
         $klienberlangganan = [];
         $seluruhKlien = Klien::with('paket_internet')->get();
@@ -113,13 +113,28 @@ class DaftarKlien extends CustomController
         return view('employee.tagihan.daftar-klien-tagihan',compact('user','klienberlangganan'));
     }
 
+    public function showDaftarSemuaTagihanKlienTertentu($k_id){
+      $user = $this->sanitizeUser(Auth::user()); 
+      // $klienTagihan = Tagihan_Klien::where('k_id',$k_id)->get();
+      $klienTagihan = DB::table('tagihan_klien')
+                      ->join('klien','tagihan_klien.k_id','=','klien.k_id')
+                      ->select('tagihan_id','tagihan_no','tagihan_periode','tagihan_ppn','tagihan_total','materai','status_bayar',
+                                'tagihan_klien.k_id','pk_no','k_namapengguna','k_namalengkap','no_kontrak')
+                      ->where('tagihan_klien.k_id',$k_id)
+                      ->get();
+                      // dd($klienTagihan->isEmpty());
+      $klien = Klien::where('k_id',$k_id)->first();
+      if ($klienTagihan->isEmpty()) $klienTagihan = null;
+      return view('employee.tagihan.daftar-klien-tagihan-semua',compact('user','klienTagihan','klien'));
+  }
+
     public function cetakPDFKlienTagihan($klien_id){
       $digitalsigning = new DigitalSignature();
       $user = $this->sanitizeUser(Auth::user()); 
       $klien = Klien::find($klien_id);
       $result = $klien->toArray();$result['tagihan'] = 0;
       $result['tagihan_no'] = $result['no_kontrak'].'/'.date("ym");
-      if(Tagihan_Klien::where('tagihan_no',$result['tagihan_no'])->exists()) return redirect()->back()->withErrors('Invoice klien ['.$result["k_namalengkap"].'] sudah ada');
+      if(Tagihan_Klien::where('tagihan_no',$result['tagihan_no'])->exists()) return redirect()->back()->withErrors('Invoice klien ['.$result["k_namalengkap"].'] '.date('F Y').' sudah ada');
 
       foreach ($klien->paket_internet as $idx => $paket) {
           $result['paket'][$idx]['pinet_id'] = $paket->pinet_id;
@@ -167,7 +182,8 @@ class DaftarKlien extends CustomController
 
       Storage::disk('frandrive')->delete('signed/'.$filename);
 
-      return redirect()->route('employee.daftar.klien.tagihan');
+      // return redirect()->route('employee.daftar.tagihan.klien');
+      return back();
 
 
 

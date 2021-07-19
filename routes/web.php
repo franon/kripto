@@ -80,8 +80,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('klien/tambah/proses', [DaftarKlien::class, 'createDataKlien'])->name('klien.tambah.proses');
             Route::post('klien/tambah/paket/proses', [DaftarKlien::class, 'addPaketKlien'])->name('klien.tambah.paket.proses');
             
-            Route::get('klien/tagihan', [DaftarKlien::class, 'showDaftarKlienTagihan'])->name('klien.tagihan');
-            Route::get('klien/cetakpdf/{klien_id}', [DaftarKlien::class, 'cetakPDFKlienTagihan'])->name('klien.tagihan.cetak');
+            Route::get('tagihan/klien', [DaftarKlien::class, 'showDaftarTagihanSemuaKlien'])->name('tagihan.klien');
+            Route::get('tagihan/klien/{klien_id}', [DaftarKlien::class, 'showDaftarSemuaTagihanKlienTertentu'])->name('tagihan.klien.tertentu');
+            Route::get('tagihan/klien/{klien_id}/cetak', [DaftarKlien::class, 'cetakPDFKlienTagihan'])->name('tagihan.klien.cetak');
             
             Route::get('klien/{k_id}', [DaftarKlien::class, 'showDetailKlien'])->name('klien.detail');
         });

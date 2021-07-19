@@ -83,7 +83,7 @@ class FileProcessing extends SimpleDrive
         $decryption = new Encryption();
         $file = Storage::disk('dropbox')->get($request->filename);
         // $file = Storage::disk('frandrive')->get($request->filename);
-        $starttime = microtime(true);
+        // $starttime = microtime(true);
         $message = $decryption->Decrypt_AES($file,$request->kunci);
         // dd('decrypt: '. sprintf('%f (s)', \microtime(true)-$starttime)); die;
         $filename = substr($request->filename,0,-5);

@@ -5,11 +5,11 @@
 <div class="col-md-12 col-sm-12  ">
     <div class="x_panel">
         <div class="x_title">
-            <a href="{{ route('employee.daftar.klien.tambah') }}" class="btn btn-primary" aria-haspopup="true" aria-expanded="false">
+            {{-- <a href="{{ route('employee.daftar.klien.tambah') }}" class="btn btn-primary" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-plus" aria-hidden="true"></i>
                 Tambah Klien
-            </a>
-            <h2>Daftar pelanggan</h2>
+            </a> --}}
+            <h2>Daftar Paket Klien Berlangganan</h2>
             <div class="clearfix"></div>
         </div>
 
@@ -30,8 +30,8 @@
                 <th class="column-title">Paket terdaftar </th>
                 <th class="column-title">Estimasi Tagihan </th>
                 <th class="column-title">Mulai Berlangganan </th>
-                <th class="column-title">Cetak Invoice </th>
-                <th class="column-title no-link last"><span class="nobr">Action</span>
+                <th class="column-title">History Invoice</th>
+                <th class="column-title no-link last"><span class="nobr">Aksi</span>
                 </th>
                 <th class="bulk-actions" colspan="7">
                   <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
@@ -56,8 +56,9 @@
                     </td>
                     <td class=" ">{{'Rp. '.number_format($tagihan,0,'.','.')}}</td>
                     <td class=" ">{{$k['mulai_berlangganan']}}</td>
-                    <td class=" "> <a href="{{ route('employee.daftar.klien.tagihan.cetak', ['klien_id'=>$k['k_id']]) }}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> {{'Cetak PDF'}}</a></td>
-                    <td class=" last"><a href="#">Detail</a>
+                    {{-- <td class=" "> <a href="{{ route('employee.daftar.tagihan.klien.cetak', ['klien_id'=>$k['k_id']]) }}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> {{'Cetak PDF'}}</a></td> --}}
+                    <td class=" last"><a href="{{ route('employee.daftar.tagihan.klien.tertentu', ['klien_id'=>$k['k_id']]) }}">Lihat</a>
+                    <td><button type="button" href="#" class="btn btn-warning">Edit</button></td>
                     </td>
                   </tr>
                 @endforeach

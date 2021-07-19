@@ -51,14 +51,14 @@ class DigitalSignature extends SimpleDrive
         $fileSignatured = $this->signDocument($file,$digitalSign,$path);
 
         //* 4. Upload File Signatured
-        $this->uploadFiles($path,$fileSignatured);
+        $this->uploadFiles($path,$fileSignatured.$digitalSign);
         $directory = Direktori::firstWhere('dir_jalur','signed/');
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
             'file_alias'=>$file->getClientOriginalName(),
             'file_tipe'=>$file->getClientOriginalExtension(),
-            'file_jalur'=>$directory->dir_jalur,
+            'file_jalur'=>$path,
             'file_jalurutuh'=>$path,
             'file_ukuran'=>$file->getSize(),
             'p_id'=>$user->p_id,
@@ -86,16 +86,15 @@ class DigitalSignature extends SimpleDrive
         //* 3. Attachment Digital sign into PDF
         $filename = $md.'.pdf'; $path = $defaultDirectory.$filename;
         $fileSignatured = $this->signDocument($file,$digitalSign,$path);
-
         //* 4. Upload File Signatured
-        $this->uploadFiles($path,$fileSignatured);
-        $directory = Direktori::find('dir-02');
+        $this->uploadFiles($path,$fileSignatured.$digitalSign);
+        $directory = Direktori::firstWhere('dir_jalur','signed/');
         $directory->file()->create([
             'file_id'=>'file-'.sha1(md5(microtime(true))),
             'file_nama'=>$filename,
             'file_alias'=>$file->getClientOriginalName(),
             'file_tipe'=>'pdf',
-            'file_jalur'=>$directory->dir_jalur,
+            'file_jalur'=>$path,
             'file_jalurutuh'=>$path,
             'file_ukuran'=>filesize($file->path()),
             'p_id'=>$user->p_id,
@@ -184,11 +183,11 @@ class DigitalSignature extends SimpleDrive
         // dd($payload);
         $pdf->write2DBarcode($payload, 'QRCODE,H', 20, 245, 30, 30, $style, 'N');
         // $pdf->Text(20, 213, 'Scan QR Untuk Validasi');
-        $pdf->AddPage();
-        $html = <<<EOD
-        <p> $digitalSign </p>
-        EOD;
-        $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+        // $pdf->AddPage();
+        // $html = <<<EOD
+        // <p> $digitalSign </p>
+        // EOD;
+        // $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
         $file = $pdf->Output($file->getClientOriginalName(),'S');
         return $file;
     }
@@ -200,14 +199,28 @@ class DigitalSignature extends SimpleDrive
         $pages = $pdf->getPages();
         $totalPage = count($pages)-1;
         foreach ($pages as $idx => $page) {
-            if ($idx == $totalPage) {
-                $digitalSign = $page->getText();
-                break;
-            }
+            // if ($idx == $totalPage) {
+                // $digitalSign = $page->getText();
+                // break;
+            // }
             $data .= $page->getText();
         }
         $data = preg_replace('/[\s|\t]+/','',$data);
-        $digitalSign = preg_replace('/[\s|\t]+/','',$digitalSign);
+        // $digitalSign = preg_replace('/[\s|\t]+/','',$digitalSign);
+        $digitalSign = $this->getSignatEOF($path);
+        // dd($data,$digitalSign);
         return [$data,$digitalSign];
+    }
+
+    public function getSignatEOF($path){
+        $fh = fopen($path,'r');
+        $chunkSize = 1024*1024;$tempFile='';
+        while(!feof($fh)){
+            $line = fread($fh, $chunkSize);
+            $tempFile .= $line;
+        }
+        fclose($fh);
+        preg_match("/%%EOF[.\n]?(.*)/",$tempFile,$sign);
+        return $sign[1];
     }
 }
